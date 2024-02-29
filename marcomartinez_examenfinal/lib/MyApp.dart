@@ -7,7 +7,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: "Examen Marco 1Ev",
+    return MaterialApp(title: "Examen Marco 2Ev",
       routes: {
         '/login_view': (context) => const LoginView()
       },

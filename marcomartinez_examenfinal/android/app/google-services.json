@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "313802715146",
+    "project_id": "marcomartinez-examen-2ev",
+    "storage_bucket": "marcomartinez-examen-2ev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:313802715146:android:3277e52b0e0ac5b900aff3",
+        "android_client_info": {
+          "package_name": "com.martinez.marco.marcomartinez_examenfinal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_w7qcfiIQEQ6uO1p-04EciAqtYerLHu4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
