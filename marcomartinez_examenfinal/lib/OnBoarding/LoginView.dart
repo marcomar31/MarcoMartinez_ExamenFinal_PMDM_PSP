@@ -7,12 +7,15 @@ import '../CustomizedObjects/Buttons.dart';
 class LoginView extends StatelessWidget {
   LoginView({super.key});
 
+  late BuildContext _context = _context;
+
   FirebaseAdmin fbAdmin = FirebaseAdmin();
   TextEditingController tecEmail = TextEditingController();
   TextEditingController tecPassword = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    _context = context;
 
     Column column = Column(
       children: [
@@ -61,7 +64,9 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  void _iniciarSesion() {
-    fbAdmin.logInWithEmail(tecEmail.text, tecPassword.text);
+  Future<void> _iniciarSesion() async {
+    if (await fbAdmin.logInWithEmail(tecEmail.text, tecPassword.text)) {
+      Navigator.of(_context).popAndPushNamed("/home_view");
+    }
   }
 }
