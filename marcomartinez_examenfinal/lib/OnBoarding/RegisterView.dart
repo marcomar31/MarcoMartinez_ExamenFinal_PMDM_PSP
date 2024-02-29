@@ -4,14 +4,15 @@ import 'package:marcomartinez_examenfinal/Singleton/FirebaseAdmin.dart';
 
 import '../CustomizedObjects/Buttons.dart';
 
-class LoginView extends StatelessWidget {
-  LoginView({super.key});
+class RegisterView extends StatelessWidget {
+  RegisterView({super.key});
 
   late BuildContext _context = _context;
 
   FirebaseAdmin fbAdmin = FirebaseAdmin();
   TextEditingController tecEmail = TextEditingController();
   TextEditingController tecPassword = TextEditingController();
+  TextEditingController tecRePassword = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +21,16 @@ class LoginView extends StatelessWidget {
     Column column = Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
-          child: OnBoardingFormField(tec: tecEmail, label: "Email", isPassword: false)
+            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+            child: OnBoardingFormField(tec: tecEmail, label: "Email", isPassword: false)
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
-          child: OnBoardingFormField(tec: tecPassword, label: "Password", isPassword: true)
+            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+            child: OnBoardingFormField(tec: tecPassword, label: "Password", isPassword: true)
+        ),
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+            child: OnBoardingFormField(tec: tecRePassword, label: "Repeat Password", isPassword: true)
         ),
 
         Row(
@@ -33,13 +38,13 @@ class LoginView extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-              child: RoundedGreenButton(text: "ACEPTAR", function: _iniciarSesion),
+              child: RoundedGreenButton(text: "CANCELAR", function: () {
+                Navigator.pop(context);
+              }),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-              child: RoundedGreenButton(text: "REGISTRARSE", function: () {
-                Navigator.of(_context).pushNamed("/register_view");
-              }),
+              child: RoundedGreenButton(text: "ACEPTAR", function: _creaUsuario),
             ),
           ],
         ),
@@ -48,7 +53,7 @@ class LoginView extends StatelessWidget {
 
     AppBar appBar = AppBar(
       title: const Text(
-        "LOGIN",
+        "REGISTER",
         style: TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
@@ -66,9 +71,9 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  Future<void> _iniciarSesion() async {
-    if (await fbAdmin.logInWithEmail(tecEmail.text, tecPassword.text)) {
-      Navigator.of(_context).popAndPushNamed("/home_view");
+  Future<void> _creaUsuario() async {
+    if (await fbAdmin.createUser(tecEmail.text, tecPassword.text, tecRePassword.text)) {
+      Navigator.pop(_context);
     }
   }
 }

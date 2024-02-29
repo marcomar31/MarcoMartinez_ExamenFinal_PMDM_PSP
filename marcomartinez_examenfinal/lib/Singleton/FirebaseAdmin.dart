@@ -3,15 +3,29 @@ import 'package:firebase_auth/firebase_auth.dart';
 class FirebaseAdmin {
   FirebaseAuth auth = FirebaseAuth.instance;
 
-  Future<void> createUser(String email, String password) async {
-    if (email.isNotEmpty && password.isNotEmpty) {
+  Future<bool> createUser(String email, String password, String rePassword) async {
+    if (email.isNotEmpty && password.isNotEmpty && rePassword.isNotEmpty) {
       if (email.contains("@")) {
-        auth.createUserWithEmailAndPassword(email: email, password: password);
+        if (password == rePassword) {
+          try {
+            auth.createUserWithEmailAndPassword(email: email, password: password);
+            print("Creado");
+            return true;
+          } catch (e) {
+            print(e);
+            return false;
+          }
+        } else {
+          print("No creado");
+          return false;
+        }
       } else {
         print("El email debe contener el caracter \"@\"");
+        return false;
       }
     } else {
       print("Email y contraseña tienen que tener contenido");
+      return false;
     }
   }
 
@@ -24,12 +38,8 @@ class FirebaseAdmin {
               password: password
           );
           return true;
-        } on FirebaseAuthException catch (e) {
-          if (e.code == 'user-not-found') {
-            print('No user found for that email.');
-          } else if (e.code == 'wrong-password') {
-            print('Wrong password provided for that user.');
-          }
+        } catch (e) {
+          print("Error al iniciar sesión");
           return false;
         }
       } else {
