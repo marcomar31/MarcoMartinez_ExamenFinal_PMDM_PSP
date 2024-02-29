@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../CustomizedObjects/Buttons.dart';
+
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
 
@@ -42,11 +44,11 @@ class LoginView extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-              child: TextButton(onPressed: () {}, child: const Text("ACEPTAR")),
+              child: RoundedGreenButton(text: "ACEPTAR", function: () {}),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-              child: TextButton(onPressed: () {}, child: const Text("REGISTRARSE")),
+              child: RoundedGreenButton(text: "REGISTRARSE", function: () {}),
             ),
           ],
         ),
