@@ -26,3 +26,35 @@ class RoundedGreenButton extends StatelessWidget {
   }
 
 }
+
+class OnBoardingTopMenuButton extends StatelessWidget {
+  final String text;
+  final VoidCallback  function;
+  final bool isPulsado;
+
+  const OnBoardingTopMenuButton({super.key,
+    required this.text,
+    required this.function,
+    required this.isPulsado
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 130,
+      height: 80,
+      child: TextButton(
+          onPressed: function,
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: isPulsado ? const Color.fromRGBO(30, 51, 79, 1.0) : Colors.transparent,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(70), topRight: Radius.circular(70), bottomLeft: Radius.elliptical(120, 160), bottomRight: Radius.elliptical(120, 160)),
+            ),
+          ),
+          child: Text(text)
+      ),
+    );
+  }
+
+}

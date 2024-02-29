@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:marcomartinez_examenfinal/OnBoarding/OnBoarding.dart';
 
 import 'Main/HomeView.dart';
 import 'OnBoarding/LoginView.dart';
@@ -11,11 +12,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(title: "Examen Marco 2Ev",
       routes: {
+        '/onboarding_view': (context) => OnBoarding(),
         '/login_view': (context) => LoginView(),
         '/register_view': (context) => RegisterView(),
         '/home_view': (context) => HomeView()
       },
-      initialRoute: '/login_view',
+      initialRoute: '/onboarding_view',
       debugShowCheckedModeBanner: false,
     );
   }

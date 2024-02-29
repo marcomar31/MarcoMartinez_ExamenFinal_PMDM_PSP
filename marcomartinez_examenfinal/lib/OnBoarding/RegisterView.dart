@@ -20,60 +20,54 @@ class RegisterView extends StatelessWidget {
 
     Column column = Column(
       children: [
-        Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
-            child: OnBoardingFormField(tec: tecEmail, label: "Email", isPassword: false)
-        ),
-        Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
-            child: OnBoardingFormField(tec: tecPassword, label: "Password", isPassword: true)
-        ),
-        Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
-            child: OnBoardingFormField(tec: tecRePassword, label: "Repeat Password", isPassword: true)
-        ),
-
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-              child: RoundedGreenButton(text: "CANCELAR", function: () {
-                Navigator.pop(context);
-              }),
+        const SizedBox(height: 90),
+        SizedBox(
+          height: 388,
+          width: 400,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-              child: RoundedGreenButton(text: "ACEPTAR", function: _creaUsuario),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+                  child: OnBoardingFormField(tec: tecEmail, label: "Email", isPassword: false, icon: Icons.email_rounded, iconColor: const Color.fromRGBO(115, 208, 156, 1.0),),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+                  child: OnBoardingFormField(tec: tecPassword, label: "Password", isPassword: true, icon: Icons.email_rounded, iconColor: const Color.fromRGBO(115, 208, 156, 1.0),),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+                  child: OnBoardingFormField(tec: tecRePassword, label: "Repeat password", isPassword: true, icon: Icons.lock_rounded, iconColor: const Color.fromRGBO(115, 208, 156, 1.0),),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                      child: RoundedGreenButton(text: "REGISTRARSE", function: _creaUsuario),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        )
       ],
-    );
-
-    AppBar appBar = AppBar(
-      title: const Text(
-        "REGISTER",
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      centerTitle: true,
-      backgroundColor: const Color.fromRGBO(35, 41, 49, 1),
-      automaticallyImplyLeading: false,
     );
 
     return Scaffold(
       body: SingleChildScrollView(child: Center(child: column)),
-      appBar: appBar,
-      backgroundColor: const Color.fromRGBO(57, 62, 70, 1),
+      backgroundColor: const Color.fromRGBO(10, 35, 65, 1.0),
     );
   }
 
   Future<void> _creaUsuario() async {
-    if (await fbAdmin.createUser(tecEmail.text, tecPassword.text, tecRePassword.text)) {
-      Navigator.pop(_context);
-    }
+    await fbAdmin.createUser(tecEmail.text, tecPassword.text, tecRePassword.text);
   }
 }
