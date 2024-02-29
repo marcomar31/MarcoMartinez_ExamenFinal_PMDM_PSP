@@ -9,9 +9,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(title: "Examen Marco 2Ev",
       routes: {
-        '/login_view': (context) => const LoginView()
+        '/login_view': (context) => LoginView()
       },
       initialRoute: '/login_view',
+      debugShowCheckedModeBanner: false,
     );
   }
   

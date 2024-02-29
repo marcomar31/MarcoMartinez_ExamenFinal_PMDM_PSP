@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:marcomartinez_examenfinal/CustomizedObjects/TextFormFields.dart';
+import 'package:marcomartinez_examenfinal/Singleton/FirebaseAdmin.dart';
 
 import '../CustomizedObjects/Buttons.dart';
 
 class LoginView extends StatelessWidget {
-  const LoginView({super.key});
+  LoginView({super.key});
+
+  FirebaseAdmin fbAdmin = FirebaseAdmin();
+  TextEditingController tecEmail = TextEditingController();
+  TextEditingController tecPassword = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController tecEmail = TextEditingController();
-    TextEditingController tecPassword = TextEditingController();
 
     Column column = Column(
       children: [
@@ -27,7 +30,7 @@ class LoginView extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-              child: RoundedGreenButton(text: "ACEPTAR", function: () {}),
+              child: RoundedGreenButton(text: "ACEPTAR", function: _iniciarSesion),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
@@ -37,7 +40,6 @@ class LoginView extends StatelessWidget {
         ),
       ],
     );
-
 
     AppBar appBar = AppBar(
       title: const Text(
@@ -52,11 +54,14 @@ class LoginView extends StatelessWidget {
       automaticallyImplyLeading: false,
     );
 
-
     return Scaffold(
       body: SingleChildScrollView(child: Center(child: column)),
       appBar: appBar,
       backgroundColor: const Color.fromRGBO(57, 62, 70, 1),
     );
+  }
+
+  void _iniciarSesion() {
+    fbAdmin.logInWithEmail(tecEmail.text, tecPassword.text);
   }
 }
