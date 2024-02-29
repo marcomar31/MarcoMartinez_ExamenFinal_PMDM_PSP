@@ -57,7 +57,7 @@ class _OnBoardingState extends State<OnBoarding> {
         body: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 50),
+              padding: const EdgeInsets.only(top: 50, bottom: 50),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -68,9 +68,12 @@ class _OnBoardingState extends State<OnBoarding> {
               ),
             ),
             Expanded(
-              child: Container(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                child: page,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: Container(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  child: page,
+                ),
               ),
             ),
           ],

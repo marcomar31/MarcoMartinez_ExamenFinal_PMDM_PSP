@@ -19,7 +19,6 @@ class OnBoardingFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 360,
       child: Row(
         children: [
           if (icon != null)
