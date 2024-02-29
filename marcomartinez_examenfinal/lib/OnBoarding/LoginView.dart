@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:marcomartinez_examenfinal/CustomizedObjects/TextFormFields.dart';
 
 import '../CustomizedObjects/Buttons.dart';
 
@@ -14,29 +15,11 @@ class LoginView extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
-          child: TextFormField(
-            controller: tecEmail,
-            style: const TextStyle(color: Colors.white),
-            decoration: const InputDecoration(
-              labelText: "Email",
-              labelStyle: TextStyle(color: Colors.white),
-            ),
-            cursorColor: const Color.fromRGBO(22, 36, 71, 1),
-          ),
-
+          child: OnBoardingFormField(tec: tecEmail, label: "Email", isPassword: false)
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
-          child: TextFormField(
-            controller: tecPassword,
-            style: const TextStyle(color: Colors.white),
-            decoration: const InputDecoration(
-              labelText: "Password",
-              labelStyle: TextStyle(color: Colors.white),
-            ),
-            cursorColor: const Color.fromRGBO(35, 41, 49, 1),
-            obscureText: true,
-          ),
+          child: OnBoardingFormField(tec: tecPassword, label: "Password", isPassword: true)
         ),
 
         Row(
@@ -71,7 +54,7 @@ class LoginView extends StatelessWidget {
 
 
     return Scaffold(
-      body: SingleChildScrollView(child: column),
+      body: SingleChildScrollView(child: Center(child: column)),
       appBar: appBar,
       backgroundColor: const Color.fromRGBO(57, 62, 70, 1),
     );
