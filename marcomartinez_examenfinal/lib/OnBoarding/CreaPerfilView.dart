@@ -15,7 +15,9 @@ class CreaPerfilView extends StatefulWidget {
 class _CreaPerfilViewState extends State<CreaPerfilView> {
   FirebaseAdmin fbAdmin = FirebaseAdmin();
 
+  TextEditingController tecNombreUsuario = TextEditingController();
   TextEditingController tecNombre = TextEditingController();
+  TextEditingController tecApellidos = TextEditingController();
   DateTime _fechaSeleccionada = DateTime.now();
 
   @override
@@ -53,47 +55,55 @@ class _CreaPerfilViewState extends State<CreaPerfilView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: OnBoardingFormField(tec: tecNombre, label: 'Nombre de usuario', icon: Icons.person_rounded, isPassword: false,),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: InkWell(
-                      onTap: _seleccionarFecha,
-                      child: InputDecorator(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Fecha de nacimiento',
-                          icon: Icon(Icons.calendar_today_rounded),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '${_fechaSeleccionada.day}/${_fechaSeleccionada.month}/${_fechaSeleccionada.year}',
-                              style: const TextStyle(fontSize: 16.0),
-                            ),
-                            const Icon(Icons.arrow_drop_down),
-                          ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: OnBoardingFormField(tec: tecNombreUsuario, label: 'Nombre de usuario', isPassword: false,),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: OnBoardingFormField(tec: tecNombre, label: 'Nombre', isPassword: false,),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: OnBoardingFormField(tec: tecApellidos, label: 'Apellidos', isPassword: false,),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: InkWell(
+                        onTap: _seleccionarFecha,
+                        child: InputDecorator(
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Fecha de nacimiento',
+                            icon: Icon(Icons.calendar_today_rounded),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '${_fechaSeleccionada.day}/${_fechaSeleccionada.month}/${_fechaSeleccionada.year}',
+                                style: const TextStyle(fontSize: 16.0),
+                              ),
+                              const Icon(Icons.arrow_drop_down),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: RoundedGreenButton(function: _guardarPerfil, text: 'Guardar Perfil',),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: RoundedGreenButton(function: _guardarPerfil, text: 'Guardar Perfil',),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-                ]),
+          ]),
         ),
       ),
     );
@@ -114,21 +124,31 @@ class _CreaPerfilViewState extends State<CreaPerfilView> {
   }
 
   void _guardarPerfil() {
-    String nombreUsuario = tecNombre.text.trim();
-    if (nombreUsuario.isNotEmpty) {
+    String nombreUsuario = tecNombreUsuario.text.trim();
+    String nombre = tecNombre.text.trim();
+    String apellidos = tecApellidos.text.trim();
+    if (nombreUsuario.isNotEmpty && nombre.isNotEmpty && apellidos.isNotEmpty) {
       print('Nombre de usuario: $nombreUsuario');
       print('Fecha de nacimiento: $_fechaSeleccionada');
       fbAdmin.auth.currentUser?.updateDisplayName(nombreUsuario);
+      final user = <String, dynamic>{
+        "nombre": nombre,
+        "apellidos": apellidos,
+        "fechaNacimiento": _fechaSeleccionada,
+        "urlFotoPerfil": ""
+      };
+
+      fbAdmin.creaPerfilUsuario(user);
     } else {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text('Por favor ingresa un nombre de usuario.'),
+          title: const Text('Error'),
+          content: const Text('Por favor ingresa un nombre de usuario.'),
           actions: [
             ElevatedButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         ),

@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseAdmin {
   FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseFirestore db = FirebaseFirestore.instance;
 
   Future<bool> createUser(String email, String password, String rePassword) async {
     if (email.isNotEmpty && password.isNotEmpty && rePassword.isNotEmpty) {
@@ -70,5 +72,9 @@ class FirebaseAdmin {
       print('Excepción: $e');
       return false;
     }
+  }
+
+  Future<void> creaPerfilUsuario(Map<String, dynamic> user) async {
+    db.collection("Perfiles").doc(auth.currentUser?.uid).set(user);
   }
 }

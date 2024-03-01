@@ -48,6 +48,14 @@ class LoginView extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       child: GestureDetector(
+                        child: const Text(
+                          'Iniciar sesión con número de teléfono',
+                          style: TextStyle(
+                            color: Color.fromRGBO(115, 208, 156, 1.0),
+                            decoration: TextDecoration.underline,
+                            decorationColor: Color.fromRGBO(115, 208, 156, 1.0),
+                          ),
+                        ),
                         onTap: () async {
                           await SystemChannels.textInput.invokeMethod('TextInput.hide');
                             showModalBottomSheet(
@@ -58,14 +66,6 @@ class LoginView extends StatelessWidget {
                               },
                             );
                           },
-                        child: const Text(
-                          'Iniciar sesión con número de teléfono',
-                          style: TextStyle(
-                            color: Color.fromRGBO(115, 208, 156, 1.0),
-                            decoration: TextDecoration.underline,
-                            decorationColor: Color.fromRGBO(115, 208, 156, 1.0),
-                          ),
-                        ),
                       ),
                     ),
                 Row(
