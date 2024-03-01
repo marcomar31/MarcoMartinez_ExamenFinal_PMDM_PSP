@@ -71,7 +71,7 @@ class _OnBoardingState extends State<OnBoarding> {
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 20.0),
                 child: Container(
-                  color: Theme.of(context).colorScheme.primaryContainer,
+                  color: const Color.fromRGBO(10, 35, 65, 1.0),
                   child: page,
                 ),
               ),

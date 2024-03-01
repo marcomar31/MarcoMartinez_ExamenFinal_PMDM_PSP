@@ -42,7 +42,7 @@ class OnBoardingTopMenuButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 130,
-      height: 80,
+      height: 90,
       child: TextButton(
           onPressed: function,
           style: TextButton.styleFrom(
