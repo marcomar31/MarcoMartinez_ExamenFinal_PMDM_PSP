@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:marcomartinez_examenfinal/OnBoarding/CreaPerfilView.dart';
 import 'package:marcomartinez_examenfinal/OnBoarding/OnBoarding.dart';
 
 import 'Main/HomeView.dart';
@@ -15,7 +16,8 @@ class MyApp extends StatelessWidget {
         '/onboarding_view': (context) => OnBoarding(),
         '/login_view': (context) => LoginView(),
         '/register_view': (context) => RegisterView(),
-        '/home_view': (context) => HomeView()
+        '/creaperfil_view': (context) => CreaPerfilView(),
+        '/home_view': (context) => const HomeView(),
       },
       initialRoute: '/onboarding_view',
       debugShowCheckedModeBanner: false,

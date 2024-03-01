@@ -10,11 +10,11 @@ import '../Singleton/PlatformAdmin.dart';
 class LoginView extends StatelessWidget {
   LoginView({super.key});
 
-  late BuildContext _context = _context;
+  late final BuildContext _context;
 
-  FirebaseAdmin fbAdmin = FirebaseAdmin();
-  TextEditingController tecEmail = TextEditingController();
-  TextEditingController tecPassword = TextEditingController();
+  final FirebaseAdmin fbAdmin = FirebaseAdmin();
+  final TextEditingController tecEmail = TextEditingController();
+  final TextEditingController tecPassword = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +92,8 @@ class LoginView extends StatelessWidget {
 
   Future<void> _iniciarSesion() async {
     if (await fbAdmin.logInWithEmail(tecEmail.text, tecPassword.text)) {
-      Navigator.of(_context).popAndPushNamed("/home_view");
+      // Navigator.of(_context).popAndPushNamed("/home_view");
+      Navigator.of(_context).popAndPushNamed("/creaperfil_view");
     }
   }
 }

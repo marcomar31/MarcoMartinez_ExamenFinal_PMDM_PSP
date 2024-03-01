@@ -28,7 +28,7 @@ class MainDrawer extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  fbAdmin.auth.currentUser?.email ?? 'No hay usuario',
+                  fbAdmin.auth.currentUser?.email ?? 'email@example.com',
                   style: const TextStyle(
                     color: Colors.grey,
                     fontSize: 14,
