@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:marcomartinez_examenfinal/CustomizedObjects/TextFormFields.dart';
+import 'package:marcomartinez_examenfinal/OnBoarding/PhoneLoginView.dart';
 import 'package:marcomartinez_examenfinal/Singleton/FirebaseAdmin.dart';
 
 import '../CustomizedObjects/Buttons.dart';
@@ -42,23 +44,30 @@ class LoginView extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: OnBoardingFormField(tec: tecPassword, label: "Password", isPassword: true, icon: Icons.lock_rounded, iconColor: const Color.fromRGBO(115, 208, 156, 1.0),),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: GestureDetector(
-                    onTap: () {
-                      // Agrega aquí la lógica para redirigir al usuario al inicio de sesión por número de teléfono
-                      // Por ejemplo, podrías usar Navigator para navegar a la pantalla correspondiente
-                      Navigator.of(context).pushNamed('/telefono_login'); // Ajusta el nombre de ruta según corresponda
-                    },
-                    child: const Text(
-                      'Utilizar número de teléfono',
-                      style: TextStyle(
-                        color: Color.fromRGBO(115, 208, 156, 1.0),
-                        decoration: TextDecoration.underline,
+                if (PlatformAdmin.isAndroidPlatform() || PlatformAdmin.isIOSPlatform())
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: GestureDetector(
+                        onTap: () async {
+                          await SystemChannels.textInput.invokeMethod('TextInput.hide');
+                            showModalBottomSheet(
+                              context: context,
+                              isDismissible: false,
+                              builder: (BuildContext context) {
+                                return PhoneLoginView();
+                              },
+                            );
+                          },
+                        child: const Text(
+                          'Iniciar sesión con número de teléfono',
+                          style: TextStyle(
+                            color: Color.fromRGBO(115, 208, 156, 1.0),
+                            decoration: TextDecoration.underline,
+                            decorationColor: Color.fromRGBO(115, 208, 156, 1.0),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

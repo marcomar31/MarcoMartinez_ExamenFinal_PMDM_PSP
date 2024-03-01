@@ -51,4 +51,24 @@ class FirebaseAdmin {
       return false;
     }
   }
+
+  Future<void> verificarTelefono(String numTelefono, void Function(PhoneAuthCredential) whenCompleted, void Function(FirebaseAuthException) whenFailed, void Function(String verificationId, int? forceResendingToken) codeSent, void Function(String verificacionId) codeAutoRetrievalTimeout) async {
+    await auth.verifyPhoneNumber(
+      phoneNumber: numTelefono,
+      verificationCompleted: whenCompleted,
+      verificationFailed: whenFailed,
+      codeSent: codeSent,
+      codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
+    );
+  }
+
+  Future<bool> signInWithPhoneNumber(PhoneAuthCredential credential) async {
+    try {
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      return true;
+    } catch (e) {
+      print('Excepción: $e');
+      return false;
+    }
+  }
 }

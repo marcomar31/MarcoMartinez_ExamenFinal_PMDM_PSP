@@ -41,7 +41,7 @@ class RegisterView extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: OnBoardingFormField(tec: tecPassword, label: "Password", isPassword: true, icon: Icons.email_rounded, iconColor: const Color.fromRGBO(115, 208, 156, 1.0),),
+                  child: OnBoardingFormField(tec: tecPassword, label: "Password", isPassword: true, icon: Icons.lock_rounded, iconColor: const Color.fromRGBO(115, 208, 156, 1.0),),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
