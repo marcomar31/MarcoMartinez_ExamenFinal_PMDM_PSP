@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../FirestoreObjects/FProfile.dart';
 import 'FirebaseAdmin.dart';
 
 class DataHolder {
@@ -7,6 +8,7 @@ class DataHolder {
   static final DataHolder _dataHolder = DataHolder._internal();
   FirebaseAdmin fbAdmin = FirebaseAdmin();
   User? usuarioActual;
+  FProfile? perfil;
 
   DataHolder._internal();
 

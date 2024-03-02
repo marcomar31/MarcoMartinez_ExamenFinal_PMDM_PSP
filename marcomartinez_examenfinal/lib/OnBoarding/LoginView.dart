@@ -92,7 +92,7 @@ class LoginView extends StatelessWidget {
 
   Future<void> _iniciarSesion() async {
     if (await fbAdmin.logInWithEmail(tecEmail.text, tecPassword.text)) {
-      if (true) {
+      if (await fbAdmin.descargarPerfil() != null) {
         Navigator.of(_context).popAndPushNamed("/home_view");
       } else {
         Navigator.of(_context).popAndPushNamed("/creaperfil_view");

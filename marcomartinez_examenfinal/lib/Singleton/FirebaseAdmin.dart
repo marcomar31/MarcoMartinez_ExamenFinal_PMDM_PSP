@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:marcomartinez_examenfinal/FirestoreObjects/FProfile.dart';
 
 import 'DataHolder.dart';
 
@@ -74,6 +75,7 @@ class FirebaseAdmin {
   Future<bool> signInWithPhoneNumber(PhoneAuthCredential credential) async {
     try {
       await FirebaseAuth.instance.signInWithCredential(credential);
+      DataHolder().usuarioActual = auth.currentUser;
       return true;
     } catch (e) {
       print('Excepción: $e');
@@ -81,8 +83,27 @@ class FirebaseAdmin {
     }
   }
 
-  Future<void> creaPerfilUsuario(Map<String, dynamic> user) async {
-    db.collection("Perfiles").doc(auth.currentUser?.uid).set(user);
+  Future<void> creaPerfilUsuario(FProfile profile) async {
+    db.collection("Perfiles").doc(auth.currentUser?.uid).set(profile.toFirestore());
+  }
+
+  Future<FProfile?> descargarPerfil() async {
+    if (auth.currentUser != null) {
+      String? uid = DataHolder().usuarioActual?.uid;
+      DocumentReference<FProfile> ref = db.collection("Perfiles")
+          .doc(uid)
+          .withConverter(
+        fromFirestore: FProfile.fromFirestore,
+        toFirestore: (FProfile perfil, _) => perfil.toFirestore(),
+      );
+
+      DocumentSnapshot<FProfile> docSnap = await ref.get();
+      DataHolder().perfil = docSnap.data();
+      return DataHolder().perfil;
+    } else {
+      print("Usuario no autenticado");
+      return null;
+    }
   }
 
   Future<String> uploadImageToStorage(String rutaNube, File rutaLocal) async {

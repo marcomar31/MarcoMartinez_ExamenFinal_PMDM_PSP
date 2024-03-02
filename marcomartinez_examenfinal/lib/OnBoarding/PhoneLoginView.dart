@@ -40,7 +40,11 @@ class _PhoneLoginViewState extends State<PhoneLoginView> {
     PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: sVerificationCode, smsCode: smsCode);
 
     if (await fbAdmin.signInWithPhoneNumber(credential)) {
-      Navigator.of(context).popAndPushNamed("/home_view");
+      if (await fbAdmin.descargarPerfil() != null) {
+        Navigator.of(context).popAndPushNamed("/home_view");
+      } else {
+        Navigator.of(context).popAndPushNamed("/creaperfil_view");
+      }
     }
   }
 

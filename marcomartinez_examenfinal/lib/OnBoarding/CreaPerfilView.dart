@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:marcomartinez_examenfinal/CustomizedObjects/TextFormFields.dart';
+import 'package:marcomartinez_examenfinal/FirestoreObjects/FProfile.dart';
 import 'package:marcomartinez_examenfinal/Singleton/FirebaseAdmin.dart';
 
 import '../CustomizedObjects/Buttons.dart';
@@ -223,13 +224,8 @@ class _CreaPerfilViewState extends State<CreaPerfilView> {
       if (_imagePreview != null) {
         subeFotoPerfil();
       }
-      final user = <String, dynamic>{
-        "nombre": nombre,
-        "apellidos": apellidos,
-        "fechaNacimiento": _fechaSeleccionada,
-      };
-
-      await fbAdmin.creaPerfilUsuario(user);
+      FProfile perfil = FProfile(nombre: nombre, apellidos: apellidos, fechaNacimiento: _fechaSeleccionada);
+      await fbAdmin.creaPerfilUsuario(perfil);
 
       Navigator.of(context).popAndPushNamed("/home_view");
     } else {
