@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:marcomartinez_examenfinal/CustomizedObjects/TextFormFields.dart';
 import 'package:marcomartinez_examenfinal/Singleton/FirebaseAdmin.dart';
 
 import '../CustomizedObjects/Buttons.dart';
+import '../Singleton/DataHolder.dart';
 import '../Singleton/PlatformAdmin.dart';
 
 class CreaPerfilView extends StatefulWidget {
@@ -17,6 +19,7 @@ class CreaPerfilView extends StatefulWidget {
 
 class _CreaPerfilViewState extends State<CreaPerfilView> {
   FirebaseAdmin fbAdmin = FirebaseAdmin();
+  late User usuarioActual;
 
   TextEditingController tecNombreUsuario = TextEditingController();
   TextEditingController tecNombre = TextEditingController();
@@ -24,6 +27,12 @@ class _CreaPerfilViewState extends State<CreaPerfilView> {
   DateTime _fechaSeleccionada = DateTime.now();
   final ImagePicker _picker = ImagePicker();
   File? _imagePreview;
+
+  @override
+  void initState() {
+    super.initState();
+    usuarioActual = DataHolder().usuarioActual!;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -210,7 +219,7 @@ class _CreaPerfilViewState extends State<CreaPerfilView> {
     if (nombreUsuario.isNotEmpty && nombre.isNotEmpty && apellidos.isNotEmpty) {
       print('Nombre de usuario: $nombreUsuario');
       print('Fecha de nacimiento: $_fechaSeleccionada');
-      fbAdmin.auth.currentUser?.updateDisplayName(nombreUsuario);
+      usuarioActual.updateDisplayName(nombreUsuario);
       if (_imagePreview != null) {
         subeFotoPerfil();
       }
@@ -241,9 +250,9 @@ class _CreaPerfilViewState extends State<CreaPerfilView> {
   }
 
   Future<void> subeFotoPerfil() async {
-    String rutaNube = "ProfilePictures/${fbAdmin.auth.currentUser?.uid}/profilePicture.jpg";
+    String rutaNube = "ProfilePictures/${usuarioActual.uid}/profilePicture.jpg";
     String rutaDescarga = await fbAdmin.uploadImageToStorage(rutaNube, _imagePreview!);
-    fbAdmin.auth.currentUser?.updatePhotoURL(rutaDescarga);
+    usuarioActual.updatePhotoURL(rutaDescarga);
   }
 
   void onPressedCamera() async {

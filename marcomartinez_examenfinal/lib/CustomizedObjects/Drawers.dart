@@ -1,9 +1,23 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:marcomartinez_examenfinal/Singleton/DataHolder.dart';
 
 import '../Singleton/FirebaseAdmin.dart';
 
-class MainDrawer extends StatelessWidget {
+class MainDrawer extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _MainDrawerState();
+}
+
+class _MainDrawerState extends State<MainDrawer> {
   final FirebaseAdmin fbAdmin = FirebaseAdmin();
+  late User usuarioActual;
+
+  @override
+  void initState() {
+    super.initState();
+    usuarioActual = DataHolder().usuarioActual!;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,21 +34,21 @@ class MainDrawer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  fbAdmin.auth.currentUser?.displayName ?? "",
+                  usuarioActual.displayName ?? "",
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold
                   ),
                 ),
-                if (fbAdmin.auth.currentUser?.email != null)
-                    Text(
-                      fbAdmin.auth.currentUser?.email ?? '',
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
-                      ),
+                if (usuarioActual.email != null)
+                  Text(
+                    usuarioActual.email ?? '',
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14,
                     ),
+                  ),
               ],
             ),
           ),
@@ -63,4 +77,5 @@ class MainDrawer extends StatelessWidget {
       ),
     );
   }
+
 }
