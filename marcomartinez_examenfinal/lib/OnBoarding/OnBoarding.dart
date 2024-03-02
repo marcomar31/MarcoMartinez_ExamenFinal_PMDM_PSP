@@ -45,8 +45,10 @@ class _OnBoardingState extends State<OnBoarding> {
     switch (selectedIndex) {
       case 0:
         page = LoginView();
+        break;
       case 1:
         page = RegisterView();
+        break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }

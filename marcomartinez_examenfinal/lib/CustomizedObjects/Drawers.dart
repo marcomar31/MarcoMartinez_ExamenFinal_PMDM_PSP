@@ -34,7 +34,7 @@ class _MainDrawerState extends State<MainDrawer> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  usuarioActual.displayName ?? "",
+                  fbAdmin.auth.currentUser?.displayName ?? "",
                   style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -49,6 +49,25 @@ class _MainDrawerState extends State<MainDrawer> {
                       fontSize: 14,
                     ),
                   ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Colors.grey,
+                      backgroundImage: usuarioActual.photoURL != null
+                          ? NetworkImage(usuarioActual.photoURL!)
+                          : null,
+                      child: usuarioActual.photoURL == null
+                          ? const Icon(
+                        Icons.person_rounded,
+                        size: 30,
+                        color: Colors.white,
+                      )
+                          : null,
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -60,21 +79,24 @@ class _MainDrawerState extends State<MainDrawer> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.message_rounded),
-            title: const Text('Mensajes'),
-            onTap: () {
-
-            },
-          ),
-          ListTile(
             leading: const Icon(Icons.settings_rounded),
             title: const Text('Configuración'),
             onTap: () {
 
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.logout_rounded),
+            title: const Text('Cerrar sesión'),
+            onTap: () async {
+                await fbAdmin.signOutUsuario();
+                Navigator.of(context).pop();
+                Navigator.of(context).popAndPushNamed("/onboarding_view");
+            },
+          ),
         ],
       ),
+
     );
   }
 

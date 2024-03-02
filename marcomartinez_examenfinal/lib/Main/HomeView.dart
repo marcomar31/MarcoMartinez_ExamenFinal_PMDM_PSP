@@ -34,6 +34,12 @@ class _HomeViewState extends State<HomeView> {
       iconTheme: const IconThemeData(color: Colors.white),
       actions: [
         IconButton(
+          icon: Icon(Icons.search_rounded),
+          onPressed: () {
+
+          },
+        ),
+        IconButton(
           icon: const Icon(Icons.notifications_rounded),
           onPressed: () {
 
@@ -58,12 +64,16 @@ class _HomeViewState extends State<HomeView> {
         },
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Buscar',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.add_box_outlined),
             label: 'Crear',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list_rounded),
+            label: 'Vista de lista',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.grid_on_rounded),
+            label: 'Vista de celdas',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),

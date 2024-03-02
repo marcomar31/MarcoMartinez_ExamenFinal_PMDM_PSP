@@ -83,8 +83,12 @@ class FirebaseAdmin {
     }
   }
 
+  Future<void> signOutUsuario() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
   Future<void> creaPerfilUsuario(FProfile profile) async {
-    db.collection("Perfiles").doc(auth.currentUser?.uid).set(profile.toFirestore());
+    await db.collection("Perfiles").doc(auth.currentUser?.uid).set(profile.toFirestore());
   }
 
   Future<FProfile?> descargarPerfil() async {
