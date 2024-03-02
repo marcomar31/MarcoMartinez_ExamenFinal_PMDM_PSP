@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:marcomartinez_examenfinal/CustomizedObjects/TextFormFields.dart';
 import 'package:marcomartinez_examenfinal/Singleton/FirebaseAdmin.dart';
 
@@ -19,6 +22,8 @@ class _CreaPerfilViewState extends State<CreaPerfilView> {
   TextEditingController tecNombre = TextEditingController();
   TextEditingController tecApellidos = TextEditingController();
   DateTime _fechaSeleccionada = DateTime.now();
+  final ImagePicker _picker = ImagePicker();
+  File? _imagePreview;
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +60,81 @@ class _CreaPerfilViewState extends State<CreaPerfilView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('AVATAR DE USUARIO'),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if(!PlatformAdmin.isWebPlatform())
+                                ElevatedButton(
+                                  onPressed: () {
+                                    onPressedCamera();
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text("Tomar foto"),
+                                ),
+                                const SizedBox(height: 12),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    onPressedGallery();
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text("Seleccionar de la galería"),
+                                ),
+                              ],
+                            ),
+                            actions: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _imagePreview = null;
+                                  });
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("Eliminar"),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 70,
+                            backgroundColor: Colors.grey,
+                            backgroundImage: _imagePreview != null
+                                ? FileImage(_imagePreview!)
+                                : null,
+                            child: _imagePreview == null
+                                ? const Icon(
+                              Icons.person_rounded,
+                              size: 70,
+                              color: Colors.white,
+                            )
+                                : null,
+                          ),
+                          Positioned(
+                            bottom: 6,
+                            right: 6,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.edit,
+                                size: 26,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       child: OnBoardingFormField(tec: tecNombreUsuario, label: 'Nombre de usuario', isPassword: false,),
@@ -153,6 +233,26 @@ class _CreaPerfilViewState extends State<CreaPerfilView> {
           ],
         ),
       );
+    }
+  }
+
+  void onPressedCamera() async {
+    XFile? image = await _picker.pickImage(source: ImageSource.camera);
+
+    if (image != null) {
+      setState(() {
+        _imagePreview = File(image.path);
+      });
+    }
+  }
+
+  void onPressedGallery() async {
+    XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        _imagePreview = File(image.path);
+      });
     }
   }
 }
