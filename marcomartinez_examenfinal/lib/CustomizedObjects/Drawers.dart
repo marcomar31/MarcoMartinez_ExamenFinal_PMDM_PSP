@@ -19,21 +19,22 @@ class MainDrawer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const Text(
-                  'USER NAME',
-                  style: TextStyle(
+                Text(
+                  fbAdmin.auth.currentUser?.displayName ?? "",
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
                     fontWeight: FontWeight.bold
                   ),
                 ),
-                Text(
-                  fbAdmin.auth.currentUser?.email ?? 'email@example.com',
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),
-                ),
+                if (fbAdmin.auth.currentUser?.email != null)
+                    Text(
+                      fbAdmin.auth.currentUser?.email ?? '',
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
+                      ),
+                    ),
               ],
             ),
           ),

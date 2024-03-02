@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class FirebaseAdmin {
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore db = FirebaseFirestore.instance;
+  FirebaseStorage fbStorage = FirebaseStorage.instance;
 
   Future<bool> createUser(String email, String password, String rePassword) async {
     if (email.isNotEmpty && password.isNotEmpty && rePassword.isNotEmpty) {
@@ -76,5 +80,21 @@ class FirebaseAdmin {
 
   Future<void> creaPerfilUsuario(Map<String, dynamic> user) async {
     db.collection("Perfiles").doc(auth.currentUser?.uid).set(user);
+  }
+
+  Future<String> uploadImageToStorage(String rutaNube, File rutaLocal) async {
+    final storageRef = fbStorage.ref();
+    final rutaAFicheroEnNube = storageRef.child(rutaNube);
+
+    try {
+      UploadTask uploadTask = rutaAFicheroEnNube.putFile(rutaLocal);
+
+      TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+      String imageUrl = await taskSnapshot.ref.getDownloadURL();
+      return imageUrl;
+    } catch (e) {
+      print("ERROR AL SUBIR IMAGEN: $e");
+      return "";
+    }
   }
 }

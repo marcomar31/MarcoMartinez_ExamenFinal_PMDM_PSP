@@ -203,7 +203,7 @@ class _CreaPerfilViewState extends State<CreaPerfilView> {
     }
   }
 
-  void _guardarPerfil() {
+  Future<void> _guardarPerfil() async {
     String nombreUsuario = tecNombreUsuario.text.trim();
     String nombre = tecNombre.text.trim();
     String apellidos = tecApellidos.text.trim();
@@ -211,20 +211,24 @@ class _CreaPerfilViewState extends State<CreaPerfilView> {
       print('Nombre de usuario: $nombreUsuario');
       print('Fecha de nacimiento: $_fechaSeleccionada');
       fbAdmin.auth.currentUser?.updateDisplayName(nombreUsuario);
+      if (_imagePreview != null) {
+        subeFotoPerfil();
+      }
       final user = <String, dynamic>{
         "nombre": nombre,
         "apellidos": apellidos,
         "fechaNacimiento": _fechaSeleccionada,
-        "urlFotoPerfil": ""
       };
 
-      fbAdmin.creaPerfilUsuario(user);
+      await fbAdmin.creaPerfilUsuario(user);
+
+      Navigator.of(context).popAndPushNamed("/home_view");
     } else {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Error'),
-          content: const Text('Por favor ingresa un nombre de usuario.'),
+          content: const Text('Por favor rellene todos los campos.'),
           actions: [
             ElevatedButton(
               onPressed: () => Navigator.pop(context),
@@ -234,6 +238,12 @@ class _CreaPerfilViewState extends State<CreaPerfilView> {
         ),
       );
     }
+  }
+
+  Future<void> subeFotoPerfil() async {
+    String rutaNube = "ProfilePictures/${fbAdmin.auth.currentUser?.uid}/profilePicture.jpg";
+    String rutaDescarga = await fbAdmin.uploadImageToStorage(rutaNube, _imagePreview!);
+    fbAdmin.auth.currentUser?.updatePhotoURL(rutaDescarga);
   }
 
   void onPressedCamera() async {
