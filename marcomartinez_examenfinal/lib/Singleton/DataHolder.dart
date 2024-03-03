@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:marcomartinez_examenfinal/FirestoreObjects/FActividad.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../FirestoreObjects/FProfile.dart';
 import 'FirebaseAdmin.dart';
@@ -9,6 +11,8 @@ class DataHolder {
   FirebaseAdmin fbAdmin = FirebaseAdmin();
   User? usuarioActual;
   FProfile? perfil;
+  FActividad? selectedActivity;
+
 
   DataHolder._internal();
 
@@ -22,6 +26,47 @@ class DataHolder {
 
   Future<void> getProfile() async {
     perfil = (await fbAdmin.descargarPerfil())!;
+  }
+
+  void saveSelectedActivityInCache() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('factivity_nombre', selectedActivity!.nombre);
+    prefs.setString('factivity_descripcion', selectedActivity!.descripcion);
+    prefs.setString('factivity_imagen', selectedActivity!.imagenUrl);
+    prefs.setString('factivity_fecha', selectedActivity!.fecha.toString());
+    prefs.setDouble('factivity_precio', selectedActivity!.precio);
+  }
+
+  Future<FActividad?> loadCachedFActivity() async {
+    if(selectedActivity != null) return selectedActivity;
+
+    await Future.delayed(const Duration(seconds: 5));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? fActivityNombre = prefs.getString('factivity_nombre');
+    fActivityNombre ??= "";
+
+    String? fActivityDescripcion = prefs.getString('factivity_descripcion');
+    fActivityDescripcion ??= "";
+
+    String? fActivityImagen = prefs.getString('factivity_imagen');
+    fActivityImagen ??= "";
+
+    String? fActivityFecha = prefs.getString('factivity_fecha');
+    fActivityFecha ??= "";
+
+    double? fActivityPrecio = prefs.getDouble('factivity_precio');
+    fActivityPrecio ?? 0;
+
+    selectedActivity = FActividad(
+        nombre: fActivityNombre,
+        descripcion: fActivityDescripcion,
+        fecha: DateTime.parse(fActivityFecha),
+        imagenUrl: fActivityImagen,
+        precio: fActivityPrecio ?? 0
+    );
+
+    return selectedActivity;
   }
 
 }

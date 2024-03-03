@@ -5,6 +5,7 @@ import 'package:marcomartinez_examenfinal/CustomizedObjects/ActividadesListView.
 import 'package:marcomartinez_examenfinal/CustomizedObjects/Drawers.dart';
 import 'package:marcomartinez_examenfinal/FirestoreObjects/FActividad.dart';
 import 'package:marcomartinez_examenfinal/Main/NotificacionesView.dart';
+import 'package:marcomartinez_examenfinal/Singleton/DataHolder.dart';
 
 import '../Singleton/FirebaseAdmin.dart';
 
@@ -55,10 +56,10 @@ class _HomeViewState extends State<HomeView> {
         IconButton(
           icon: const Icon(Icons.notifications_rounded),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const NotificacionesView()),
-            );          },
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificacionesView())).then((_)  {
+              actualizarActividades();
+            });
+          },
         ),
       ],
     );
@@ -122,29 +123,52 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget? creadorDeItemLista(BuildContext context, int index) {
-    return ActividadesListView(
-      sText: actividades[index].nombre,
-      dFontSize: 20,
-      imageUrl: actividades[index].imagenUrl,
-    );
+    if (actividades[index].imagenUrl != "") {
+      return ActividadesListView(
+        sText: actividades[index].nombre,
+        dFontSize: 20,
+        iPosicion: index,
+        imageUrl: actividades[index].imagenUrl,
+        onPressed: onPressedItemList
+      );
+    } else {
+      return ActividadesListView(
+          sText: actividades[index].nombre,
+          dFontSize: 20,
+          iPosicion: index,
+          onPressed: onPressedItemList
+      );
+    }
   }
 
   Widget creadorDeSeparadorLista(BuildContext context, int index) {
     return const Divider(color: Color.fromRGBO(37, 77, 152, 1.0), thickness: 2,);
   }
 
-  Widget celdasOLista(bool isList) {
+  Widget? creadorDeItemMatriz(BuildContext context, int index){
+    return ActividadesGridView(actividades: actividades, iPosicion: index, onPressed: onPressedItemList, numActividadesFila: 3,);
+  }
+
+  Widget? celdasOLista(bool isList) {
     if (isList) {
       return SizedBox(
         child: ListView.separated(
-          padding: const EdgeInsets.all(10),
           itemCount: actividades.length,
           itemBuilder: creadorDeItemLista,
           separatorBuilder: creadorDeSeparadorLista,
         ),
       );
     } else {
-      return ActividadesGridView(actividades: actividades);
+      return creadorDeItemMatriz(context, actividades.length);
+    }
+  }
+
+  void onPressedItemList(int index) async {
+    DataHolder().selectedActivity = actividades[index];
+    DataHolder().saveSelectedActivityInCache();
+    bool resultado = await Navigator.of(context).pushNamed("/actividad_view") as bool? ?? false;
+    if (resultado) {
+      actualizarActividades();
     }
   }
 
