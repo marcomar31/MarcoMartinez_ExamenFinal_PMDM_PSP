@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:marcomartinez_examenfinal/Main/BoredApiView.dart';
 import 'package:marcomartinez_examenfinal/OnBoarding/CreaPerfilView.dart';
 import 'package:marcomartinez_examenfinal/OnBoarding/OnBoarding.dart';
 
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
         '/register_view': (context) => RegisterView(),
         '/creaperfil_view': (context) => const CreaPerfilView(),
         '/home_view': (context) => const HomeView(),
+        '/boredapi_view': (context) => BoredApiView(),
       },
       initialRoute: '/onboarding_view',
       debugShowCheckedModeBanner: false,

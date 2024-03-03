@@ -33,6 +33,25 @@ class _MainDrawerState extends State<MainDrawer> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Colors.grey,
+                      backgroundImage: fbAdmin.auth.currentUser?.photoURL != null
+                          ? NetworkImage(fbAdmin.auth.currentUser?.photoURL ?? "")
+                          : null,
+                      child: fbAdmin.auth.currentUser?.photoURL == null
+                          ? const Icon(
+                        Icons.person_rounded,
+                        size: 30,
+                        color: Colors.white,
+                      )
+                          : null,
+                    ),
+                  ],
+                ),
                 Text(
                   fbAdmin.auth.currentUser?.displayName ?? "",
                   style: const TextStyle(
@@ -49,25 +68,7 @@ class _MainDrawerState extends State<MainDrawer> {
                       fontSize: 14,
                     ),
                   ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundColor: Colors.grey,
-                      backgroundImage: usuarioActual.photoURL != null
-                          ? NetworkImage(usuarioActual.photoURL!)
-                          : null,
-                      child: usuarioActual.photoURL == null
-                          ? const Icon(
-                        Icons.person_rounded,
-                        size: 30,
-                        color: Colors.white,
-                      )
-                          : null,
-                    ),
-                  ],
-                ),
+
               ],
             ),
           ),
@@ -76,6 +77,14 @@ class _MainDrawerState extends State<MainDrawer> {
             title: const Text('Home'),
             onTap: () {
 
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.tag_faces_rounded),
+            title: const Text('BoredAPI'),
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushNamed("/boredapi_view");
             },
           ),
           ListTile(
@@ -91,12 +100,11 @@ class _MainDrawerState extends State<MainDrawer> {
             onTap: () async {
                 await fbAdmin.signOutUsuario();
                 Navigator.of(context).pop();
-                Navigator.of(context).popAndPushNamed("/onboarding_view");
+                Navigator.of(context).pushNamed("/onboarding_view");
             },
           ),
         ],
       ),
-
     );
   }
 
