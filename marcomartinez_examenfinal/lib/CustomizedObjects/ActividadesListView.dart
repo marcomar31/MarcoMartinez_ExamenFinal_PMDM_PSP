@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class PostCellView extends StatelessWidget {
+class ActividadesListView extends StatelessWidget {
 
   final String sText;
   final double dFontSize;
 
-  const PostCellView ({super.key,
+  const ActividadesListView ({super.key,
     required this.sText,
     required this.dFontSize
   });

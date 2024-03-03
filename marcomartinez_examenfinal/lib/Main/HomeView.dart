@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:marcomartinez_examenfinal/CustomizedObjects/ActividadesGridView.dart';
+import 'package:marcomartinez_examenfinal/CustomizedObjects/ActividadesListView.dart';
 import 'package:marcomartinez_examenfinal/CustomizedObjects/Drawers.dart';
+import 'package:marcomartinez_examenfinal/FirestoreObjects/FActividad.dart';
 import 'package:marcomartinez_examenfinal/Main/NotificacionesView.dart';
 
 import '../Singleton/FirebaseAdmin.dart';
@@ -13,15 +17,17 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   FirebaseAdmin fbAdmin = FirebaseAdmin();
+  final List<FActividad> actividades = [];
+  bool blIsList = false;
+
+  @override
+  void initState() {
+    descargarActividades();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    Column column = const Column(
-      children: [
-
-      ],
-    );
-
     AppBar appBar = AppBar(
       title: const Text(
         "HOME",
@@ -52,7 +58,14 @@ class _HomeViewState extends State<HomeView> {
     );
 
     return Scaffold(
-      body: SingleChildScrollView(child: Center(child: column)),
+      body: Center(child:
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Center(
+              child: celdasOLista(blIsList),
+            ),
+          ),
+        ),
       drawer: MainDrawer(),
       appBar: appBar,
       backgroundColor: const Color.fromRGBO(10, 35, 65, 1.0),
@@ -86,5 +99,44 @@ class _HomeViewState extends State<HomeView> {
         ],
       ),
     );
+  }
+
+  Widget? creadorDeItemLista(BuildContext context, int index) {
+    return ActividadesListView(sText: actividades[index].nombre,
+        dFontSize: 20);
+  }
+
+  Widget creadorDeSeparadorLista(BuildContext context, int index) {
+    return const Divider(color: Color.fromRGBO(37, 77, 152, 1.0), thickness: 2,);
+  }
+
+  Widget celdasOLista(bool isList) {
+    if (isList) {
+      return SizedBox(
+        height: MediaQuery.of(context).size.height,
+        child: ListView.separated(
+          padding: const EdgeInsets.all(80),
+          itemCount: actividades.length,
+          itemBuilder: creadorDeItemLista,
+          separatorBuilder: creadorDeSeparadorLista,
+        ),
+      );
+    } else {
+      return ActividadesGridView(actividades: actividades);
+    }
+  }
+
+  void descargarActividades() async {
+    CollectionReference<FActividad> reference = fbAdmin.db
+        .collection("Actividades")
+        .withConverter(fromFirestore: FActividad.fromFirestore,
+        toFirestore: (FActividad actividad, _) => actividad.toFirestore());
+
+    QuerySnapshot<FActividad> querySnap = await reference.get();
+    for (int i = 0; i < querySnap.docs.length; i++) {
+      setState(() {
+        actividades.add(querySnap.docs[i].data());
+      });
+    }
   }
 }
