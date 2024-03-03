@@ -14,8 +14,8 @@ class ActividadesListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(sText,
       style: TextStyle(
-          color: Colors.white,
-          fontSize: dFontSize),
+        color: Colors.white,
+        fontSize: dFontSize),
     );
   }
 

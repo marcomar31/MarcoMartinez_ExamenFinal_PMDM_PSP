@@ -18,7 +18,7 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   FirebaseAdmin fbAdmin = FirebaseAdmin();
   final List<FActividad> actividades = [];
-  bool blIsList = false;
+  bool blIsList = true;
 
   @override
   void initState() {
@@ -77,6 +77,16 @@ class _HomeViewState extends State<HomeView> {
         onTap: (index) {
           if (index == 0) {
             Navigator.of(context).pushNamed("/creaactividad_view");
+          } else if (index == 1) {
+            setState(() {
+              blIsList = true;
+            });
+          } else if (index == 2) {
+            setState(() {
+              blIsList = false;
+            });
+          } else if (index == 3) {
+            // Navigator.of(context).pushNamed("/perfil_view");
           }
         },
         items: const [
@@ -113,9 +123,8 @@ class _HomeViewState extends State<HomeView> {
   Widget celdasOLista(bool isList) {
     if (isList) {
       return SizedBox(
-        height: MediaQuery.of(context).size.height,
         child: ListView.separated(
-          padding: const EdgeInsets.all(80),
+          padding: const EdgeInsets.all(10),
           itemCount: actividades.length,
           itemBuilder: creadorDeItemLista,
           separatorBuilder: creadorDeSeparadorLista,
