@@ -41,6 +41,12 @@ class _HomeViewState extends State<HomeView> {
       iconTheme: const IconThemeData(color: Colors.white),
       actions: [
         IconButton(
+          icon: const Icon(Icons.refresh_rounded),
+          onPressed: () {
+            actualizarActividades();
+          },
+        ),
+        IconButton(
           icon: Icon(Icons.search_rounded),
           onPressed: () {
 
@@ -76,7 +82,9 @@ class _HomeViewState extends State<HomeView> {
         unselectedItemColor: Colors.grey[400],
         onTap: (index) {
           if (index == 0) {
-            Navigator.of(context).pushNamed("/creaactividad_view");
+            Navigator.of(context).pushNamed("/creaactividad_view").then((_) {
+              actualizarActividades();
+            });
           } else if (index == 1) {
             setState(() {
               blIsList = true;
@@ -86,7 +94,9 @@ class _HomeViewState extends State<HomeView> {
               blIsList = false;
             });
           } else if (index == 3) {
-            Navigator.of(context).pushNamed("/perfil_view");
+            Navigator.of(context).pushNamed("/perfil_view").then((_) {
+              actualizarActividades();
+            });
           }
         },
         items: const [
@@ -112,8 +122,11 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget? creadorDeItemLista(BuildContext context, int index) {
-    return ActividadesListView(sText: actividades[index].nombre,
-        dFontSize: 20);
+    return ActividadesListView(
+      sText: actividades[index].nombre,
+      dFontSize: 20,
+      imageUrl: actividades[index].imagenUrl,
+    );
   }
 
   Widget creadorDeSeparadorLista(BuildContext context, int index) {
@@ -148,4 +161,12 @@ class _HomeViewState extends State<HomeView> {
       });
     }
   }
+
+  void actualizarActividades() async {
+    setState(() {
+      actividades.clear();
+    });
+    descargarActividades();
+  }
+
 }
