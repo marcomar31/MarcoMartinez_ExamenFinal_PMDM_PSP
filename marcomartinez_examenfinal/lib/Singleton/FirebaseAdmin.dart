@@ -92,6 +92,10 @@ class FirebaseAdmin {
     await db.collection("Perfiles").doc(auth.currentUser?.uid).set(profile.toFirestore());
   }
 
+  void actualizarPerfilUsuario(FProfile perfil) async{
+    await db.collection("Perfiles").doc(auth.currentUser?.uid).set(perfil.toFirestore());
+  }
+
   Future<FProfile?> descargarPerfil() async {
     if (auth.currentUser != null) {
       String? uid = DataHolder().usuarioActual?.uid;

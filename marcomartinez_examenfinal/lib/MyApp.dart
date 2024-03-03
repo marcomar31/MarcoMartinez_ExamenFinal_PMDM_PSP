@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:marcomartinez_examenfinal/Main/ActividadView.dart';
 import 'package:marcomartinez_examenfinal/Main/BoredApiView.dart';
 import 'package:marcomartinez_examenfinal/Main/CreaActividadView.dart';
+import 'package:marcomartinez_examenfinal/Main/MapaView.dart';
 import 'package:marcomartinez_examenfinal/OnBoarding/CreaPerfilView.dart';
 import 'package:marcomartinez_examenfinal/OnBoarding/OnBoarding.dart';
 
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         '/creaactividad_view': (context) => const CreaActividadView(),
         '/perfil_view': (context) => const PerfilView(),
         '/actividad_view': (context) => const ActividadView(),
+        '/mapa_view': (context) => const MapaView(),
       },
       initialRoute: '/onboarding_view',
       debugShowCheckedModeBanner: false,

@@ -1,13 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:marcomartinez_examenfinal/CustomizedObjects/ActividadesGridView.dart';
 import 'package:marcomartinez_examenfinal/CustomizedObjects/ActividadesListView.dart';
 import 'package:marcomartinez_examenfinal/CustomizedObjects/Drawers.dart';
 import 'package:marcomartinez_examenfinal/FirestoreObjects/FActividad.dart';
 import 'package:marcomartinez_examenfinal/Main/NotificacionesView.dart';
 import 'package:marcomartinez_examenfinal/Singleton/DataHolder.dart';
+import 'package:marcomartinez_examenfinal/Singleton/GeolocAdmin.dart';
 
 import '../Singleton/FirebaseAdmin.dart';
+import '../Singleton/PlatformAdmin.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -18,13 +21,29 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   FirebaseAdmin fbAdmin = FirebaseAdmin();
+  GeolocAdmin geolocAdmin = GeolocAdmin();
   final List<FActividad> actividades = [];
   bool blIsList = true;
+  late Position position;
 
   @override
   void initState() {
-    descargarActividades();
     super.initState();
+    inicializarDatos();
+  }
+
+  Future<void> inicializarDatos() async {
+    descargarActividades();
+    if (!PlatformAdmin.isWebPlatform()) {
+      await determinarPosicionActual();
+    }
+  }
+
+  Future<void> determinarPosicionActual() async {
+    final positionTemp = await geolocAdmin.determinePosition();
+    setState(() {
+      position = positionTemp;
+    });
   }
 
   @override
@@ -48,7 +67,7 @@ class _HomeViewState extends State<HomeView> {
           },
         ),
         IconButton(
-          icon: Icon(Icons.search_rounded),
+          icon: const Icon(Icons.search_rounded),
           onPressed: () {
 
           },

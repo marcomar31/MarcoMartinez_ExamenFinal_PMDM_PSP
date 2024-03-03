@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:marcomartinez_examenfinal/FirestoreObjects/FActividad.dart';
+import 'package:marcomartinez_examenfinal/Singleton/GeolocAdmin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../FirestoreObjects/FProfile.dart';
@@ -9,10 +12,10 @@ class DataHolder {
 
   static final DataHolder _dataHolder = DataHolder._internal();
   FirebaseAdmin fbAdmin = FirebaseAdmin();
+  GeolocAdmin geolocAdmin = GeolocAdmin();
   User? usuarioActual;
   FProfile? perfil;
   FActividad? selectedActivity;
-
 
   DataHolder._internal();
 
@@ -67,6 +70,19 @@ class DataHolder {
     );
 
     return selectedActivity;
+  }
+
+  void suscribeACambiosGPSUsuario(){
+    geolocAdmin.registrarCambiosLoc(posicionDelMovilCambio);
+  }
+
+  void posicionDelMovilCambio(Position? position) {
+    if (perfil != null && position != null) {
+      perfil!.geoloc = GeoPoint(position.latitude, position.longitude);
+      fbAdmin.actualizarPerfilUsuario(perfil!);
+    } else {
+      print("Error: Usuario o posición es null. No se puede actualizar la ubicación.");
+    }
   }
 
 }

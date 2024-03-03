@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:marcomartinez_examenfinal/CustomizedObjects/TextFormFields.dart';
 import 'package:marcomartinez_examenfinal/FirestoreObjects/FProfile.dart';
@@ -109,141 +111,141 @@ class _PerfilViewState extends State<PerfilView> {
       body: SingleChildScrollView(
         child: Center(
           child: Column(
-              children: [
-                SizedBox(
-                  width: (screenWidth < 600) ? PlatformAdmin.getScreenWidth(context)-50 : 600,
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 20, bottom: 20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text('AVATAR DE USUARIO'),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    if(!PlatformAdmin.isWebPlatform())
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          onPressedCamera();
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text("Tomar foto"),
-                                      ),
-                                    const SizedBox(height: 12),
+            children: [
+              SizedBox(
+                width: (screenWidth < 600) ? PlatformAdmin.getScreenWidth(context)-50 : 600,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 20, bottom: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('AVATAR DE USUARIO'),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if(!PlatformAdmin.isWebPlatform())
                                     ElevatedButton(
                                       onPressed: () {
-                                        onPressedGallery();
+                                        onPressedCamera();
                                         Navigator.pop(context);
                                       },
-                                      child: const Text("Seleccionar de la galería"),
+                                      child: const Text("Tomar foto"),
                                     ),
-                                  ],
-                                ),
-                                actions: [
+                                  const SizedBox(height: 12),
                                   ElevatedButton(
                                     onPressed: () {
-                                      setState(() {
-                                        _imagePreview = null;
-                                        circleAvatar = const CircleAvatar(
-                                            radius: 70,
-                                            backgroundColor: Colors.grey,
-                                            backgroundImage: null,
-                                            child: Icon(
-                                              Icons.person_rounded,
-                                              size: 70,
-                                              color: Colors.white,
-                                            )
-                                        );
-                                      });
+                                      onPressedGallery();
                                       Navigator.pop(context);
                                     },
-                                    child: const Text("Eliminar"),
+                                    child: const Text("Seleccionar de la galería"),
                                   ),
                                 ],
                               ),
-                            );
-                          },
-                          child: Stack(
-                            children: [
-                              circleAvatar,
-                              Positioned(
-                                bottom: 6,
-                                right: 6,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: const Icon(
-                                    Icons.edit,
-                                    size: 26,
-                                    color: Colors.black,
-                                  ),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _imagePreview = null;
+                                      circleAvatar = const CircleAvatar(
+                                          radius: 70,
+                                          backgroundColor: Colors.grey,
+                                          backgroundImage: null,
+                                          child: Icon(
+                                            Icons.person_rounded,
+                                            size: 70,
+                                            color: Colors.white,
+                                          )
+                                      );
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text("Eliminar"),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        child: Stack(
+                          children: [
+                            circleAvatar,
+                            Positioned(
+                              bottom: 6,
+                              right: 6,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(
+                                  Icons.edit,
+                                  size: 26,
+                                  color: Colors.black,
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: OnBoardingFormField(tec: tecNombreUsuario, label: 'Nombre de usuario', isPassword: false,),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: OnBoardingFormField(tec: tecNombre, label: 'Nombre', isPassword: false,),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: OnBoardingFormField(tec: tecApellidos, label: 'Apellidos', isPassword: false,),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: InkWell(
-                            onTap: _seleccionarFecha,
-                            child: InputDecorator(
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Fecha de nacimiento',
-                                icon: Icon(Icons.calendar_today_rounded),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    '${_fechaSeleccionada.day}/${_fechaSeleccionada.month}/${_fechaSeleccionada.year}',
-                                    style: const TextStyle(fontSize: 16.0),
-                                  ),
-                                  const Icon(Icons.arrow_drop_down),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 20),
-                              child: RoundedGreenButton(function: _guardarPerfil, text: 'Guardar Cambios',),
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: OnBoardingFormField(tec: tecNombreUsuario, label: 'Nombre de usuario', isPassword: false,),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: OnBoardingFormField(tec: tecNombre, label: 'Nombre', isPassword: false,),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: OnBoardingFormField(tec: tecApellidos, label: 'Apellidos', isPassword: false,),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: InkWell(
+                          onTap: _seleccionarFecha,
+                          child: InputDecorator(
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Fecha de nacimiento',
+                              icon: Icon(Icons.calendar_today_rounded),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '${_fechaSeleccionada.day}/${_fechaSeleccionada.month}/${_fechaSeleccionada.year}',
+                                  style: const TextStyle(fontSize: 16.0),
+                                ),
+                                const Icon(Icons.arrow_drop_down),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: RoundedGreenButton(function: _guardarPerfil, text: 'Guardar Cambios',),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              ]),
+              ),
+            ]),
         ),
       ),
     );
@@ -274,7 +276,14 @@ class _PerfilViewState extends State<PerfilView> {
       if (_imagePreview != null) {
         subeFotoPerfil();
       }
-      FProfile perfil = FProfile(nombre: nombre, apellidos: apellidos, fechaNacimiento: _fechaSeleccionada);
+
+      Position posicion = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      double latitud = posicion.latitude;
+      double longitud = posicion.longitude;
+
+      GeoPoint geoPoint = GeoPoint(latitud, longitud);
+
+      FProfile perfil = FProfile(nombre: nombre, apellidos: apellidos, fechaNacimiento: _fechaSeleccionada, geoloc: geoPoint);
       await fbAdmin.creaPerfilUsuario(perfil);
       DataHolder().getProfile();
       Navigator.of(context).popAndPushNamed("/home_view");

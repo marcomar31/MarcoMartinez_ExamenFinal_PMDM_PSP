@@ -81,6 +81,14 @@ class _MainDrawerState extends State<MainDrawer> {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.map_rounded),
+            title: const Text('Mapa'),
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushNamed("/mapa_view");
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.tag_faces_rounded),
             title: const Text('BoredAPI'),
             onTap: () {

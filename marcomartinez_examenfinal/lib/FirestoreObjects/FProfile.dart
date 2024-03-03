@@ -4,11 +4,13 @@ class FProfile {
   final String nombre;
   final String apellidos;
   final DateTime fechaNacimiento;
+  GeoPoint geoloc;
 
   FProfile({
     required this.nombre,
     required this.apellidos,
     required this.fechaNacimiento,
+    required this.geoloc,
   });
 
   factory FProfile.fromFirestore(
@@ -25,6 +27,7 @@ class FProfile {
       nombre: data?['nombre'] ?? "",
       apellidos: data?['apellidos'] ?? "",
       fechaNacimiento: fechaNacimiento,
+      geoloc:data?['geoloc'] != null ? data!['geoloc'] : const GeoPoint(0, 0)
     );
   }
 
@@ -33,6 +36,7 @@ class FProfile {
       "nombre": nombre,
       "apellidos": apellidos,
       "fechaNacimiento": fechaNacimiento,
+      "geoloc": geoloc,
     };
   }
 }

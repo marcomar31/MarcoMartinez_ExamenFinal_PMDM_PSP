@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -224,7 +225,7 @@ class _CreaPerfilViewState extends State<CreaPerfilView> {
       if (_imagePreview != null) {
         subeFotoPerfil();
       }
-      FProfile perfil = FProfile(nombre: nombre, apellidos: apellidos, fechaNacimiento: _fechaSeleccionada);
+      FProfile perfil = FProfile(nombre: nombre, apellidos: apellidos, fechaNacimiento: _fechaSeleccionada, geoloc: const GeoPoint(0,0));
       await fbAdmin.creaPerfilUsuario(perfil);
       await DataHolder().getProfile();
       Navigator.of(context).popAndPushNamed("/home_view");
