@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:marcomartinez_examenfinal/FirestoreObjects/FActividad.dart';
 import 'package:marcomartinez_examenfinal/FirestoreObjects/FProfile.dart';
 
 import 'DataHolder.dart';
@@ -124,5 +125,15 @@ class FirebaseAdmin {
       print("ERROR AL SUBIR IMAGEN: $e");
       return "";
     }
+  }
+
+  Future<void> subirActividad(FActividad actividadNueva) async {
+    CollectionReference<FActividad> postsRef = db.collection("Actividades")
+        .withConverter(
+      fromFirestore: FActividad.fromFirestore,
+      toFirestore: (FActividad actividad, _) => actividad.toFirestore(),
+    );
+
+    postsRef.add(actividadNueva);
   }
 }

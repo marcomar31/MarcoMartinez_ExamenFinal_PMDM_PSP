@@ -5,12 +5,14 @@ class FActividad {
   final String descripcion;
   final DateTime fecha;
   final double precio;
+  final String imagenUrl;
 
   FActividad({
     required this.nombre,
     required this.descripcion,
     required this.fecha,
     required this.precio,
+    required this.imagenUrl,
   });
 
   factory FActividad.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot, SnapshotOptions? options) {
@@ -23,6 +25,7 @@ class FActividad {
       descripcion: data?['descripcion'] ?? "",
       fecha: fecha,
       precio: (data?['precio'] ?? 0.0).toDouble(),
+      imagenUrl: data?['imagenUrl'] ?? "",
     );
   }
 
@@ -32,6 +35,7 @@ class FActividad {
       "descripcion": descripcion,
       "fecha": fecha,
       "precio": precio,
+      "imagenUrl": imagenUrl, 
     };
   }
 }

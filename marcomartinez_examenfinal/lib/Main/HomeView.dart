@@ -62,7 +62,9 @@ class _HomeViewState extends State<HomeView> {
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.grey[400],
         onTap: (index) {
-
+          if (index == 0) {
+            Navigator.of(context).pushNamed("/creaactividad_view");
+          }
         },
         items: const [
           BottomNavigationBarItem(
