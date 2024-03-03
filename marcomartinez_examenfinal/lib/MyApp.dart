@@ -3,6 +3,7 @@ import 'package:marcomartinez_examenfinal/Main/BoredApiView.dart';
 import 'package:marcomartinez_examenfinal/OnBoarding/CreaPerfilView.dart';
 import 'package:marcomartinez_examenfinal/OnBoarding/OnBoarding.dart';
 
+import 'Main/ConfiguracionView.dart';
 import 'Main/HomeView.dart';
 import 'OnBoarding/LoginView.dart';
 import 'OnBoarding/RegisterView.dart';
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
         '/creaperfil_view': (context) => const CreaPerfilView(),
         '/home_view': (context) => const HomeView(),
         '/boredapi_view': (context) => BoredApiView(),
+        '/configuracion_view': (context) => const ConfiguracionView(),
       },
       initialRoute: '/onboarding_view',
       debugShowCheckedModeBanner: false,

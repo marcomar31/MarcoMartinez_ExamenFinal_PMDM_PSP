@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:marcomartinez_examenfinal/Singleton/HttpAdmin.dart';
 
 import '../CustomizedObjects/BigCard.dart';
+import '../CustomizedObjects/Drawers.dart';
 
 class BoredApiView extends StatefulWidget {
   @override
@@ -36,18 +37,14 @@ class _BoredApiViewState extends State<BoredApiView> {
       ),
       centerTitle: true,
       backgroundColor: const Color.fromRGBO(2, 25, 52, 1.0),
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
+      iconTheme: const IconThemeData(color: Colors.white),
     );
 
     return Scaffold(
       appBar: appBar,
       backgroundColor: const Color.fromRGBO(10, 35, 65, 1.0),
       body: Center(child: body),
+      drawer: MainDrawer(),
       bottomNavigationBar: BottomAppBar(
         color: const Color.fromRGBO(2, 25, 52, 1.0),
         child: Row(

@@ -76,7 +76,8 @@ class _MainDrawerState extends State<MainDrawer> {
             leading: const Icon(Icons.home_rounded),
             title: const Text('Home'),
             onTap: () {
-
+              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacementNamed("/home_view");
             },
           ),
           ListTile(
@@ -91,7 +92,8 @@ class _MainDrawerState extends State<MainDrawer> {
             leading: const Icon(Icons.settings_rounded),
             title: const Text('Configuración'),
             onTap: () {
-
+              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacementNamed("/configuracion_view");
             },
           ),
           ListTile(
