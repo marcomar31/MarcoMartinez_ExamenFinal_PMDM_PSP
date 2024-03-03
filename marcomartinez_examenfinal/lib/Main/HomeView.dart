@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:marcomartinez_examenfinal/CustomizedObjects/Drawers.dart';
+import 'package:marcomartinez_examenfinal/Main/NotificacionesView.dart';
 
 import '../Singleton/FirebaseAdmin.dart';
 
@@ -42,8 +43,10 @@ class _HomeViewState extends State<HomeView> {
         IconButton(
           icon: const Icon(Icons.notifications_rounded),
           onPressed: () {
-
-          },
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const NotificacionesView()),
+            );          },
         ),
       ],
     );
@@ -58,9 +61,8 @@ class _HomeViewState extends State<HomeView> {
         backgroundColor: const Color.fromRGBO(2, 25, 52, 1.0),
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.grey[400],
-        currentIndex: 0,
         onTap: (index) {
-          // Aquí puedes agregar la lógica para manejar el cambio de ícono
+
         },
         items: const [
           BottomNavigationBarItem(
