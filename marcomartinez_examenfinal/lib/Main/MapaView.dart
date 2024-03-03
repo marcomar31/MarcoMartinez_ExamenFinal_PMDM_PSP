@@ -18,6 +18,7 @@ class MapaViewState extends State<MapaView> {
   FirebaseFirestore db = FirebaseFirestore.instance;
   final Map<String, FProfile> tablaUsuarios = {};
   MapType _tipoMapa = MapType.normal;
+  CameraPosition? _kUser;
 
   @override
   void initState() {
@@ -166,7 +167,7 @@ class MapaViewState extends State<MapaView> {
         ],
       ),
       body: Container(
-        color: const Color.fromRGBO(128, 179, 255, 1),
+        color: const Color.fromRGBO(10, 35, 65, 1.0),
         child: Center(
           child: _ubicacionActual != null
               ? GoogleMap(
