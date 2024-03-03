@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:marcomartinez_examenfinal/FirestoreObjects/FProfile.dart';
+import 'package:marcomartinez_examenfinal/Singleton/FirebaseAdmin.dart';
 
 class MapaView extends StatefulWidget {
   const MapaView({Key? key}) : super(key: key);
@@ -12,13 +13,13 @@ class MapaView extends StatefulWidget {
 }
 
 class MapaViewState extends State<MapaView> {
+  FirebaseAdmin fbAdmin = FirebaseAdmin();
   Position? _ubicacionActual;
   late GoogleMapController _controller;
   Set<Marker> marcadores = {};
-  FirebaseFirestore db = FirebaseFirestore.instance;
-  final Map<String, FProfile> tablaUsuarios = {};
+  late CameraPosition _kUser;
   MapType _tipoMapa = MapType.normal;
-  CameraPosition? _kUser;
+  final Map<String, FProfile> tablaPerfiles = Map();
 
   @override
   void initState() {
@@ -41,45 +42,36 @@ class MapaViewState extends State<MapaView> {
     });
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  void suscribirADescargaUsuarios() async{
+    CollectionReference<FProfile> ref = fbAdmin.db.collection("Perfiles")
+        .withConverter(fromFirestore: FProfile
+        .fromFirestore,
+      toFirestore: (FProfile user, _) => user.toFirestore(),);
+    ref.snapshots().listen(usuariosDescargados, onError: descargaUsuariosError,);
   }
 
-  void suscribirADescargaUsuarios() async {
-    CollectionReference<FProfile> ref = db.collection("Usuarios")
-        .withConverter(
-      fromFirestore: FProfile.fromFirestore,
-      toFirestore: (FProfile user, _) => user.toFirestore(),
-    );
-    ref.snapshots().listen(usuariosDescargados, onError: descargaUsuariosError);
-  }
+  void usuariosDescargados(QuerySnapshot<FProfile> perfilesDescargados) {
+    print("NUMERO DE USUARIOS ACTUALIZADOS>>>> " +
+        perfilesDescargados.docChanges.length.toString());
 
-  void usuariosDescargados(QuerySnapshot<FProfile> usuariosDescargados) {
-    print("NUMERO DE USUARIOS ACTUALIZADOS>>>> ${usuariosDescargados.docChanges
-        .length}");
+    Set<Marker> marcTemp = Set();
 
-    Set<Marker> marcTemp = {};
+    for (int i = 0; i < perfilesDescargados.docChanges.length; i++) {
+      FProfile temp = perfilesDescargados.docChanges[i].doc.data()!;
+      tablaPerfiles[perfilesDescargados.docChanges[i].doc.id] = temp;
 
-    for (int i = 0; i < usuariosDescargados.docChanges.length; i++) {
-      FProfile temp = usuariosDescargados.docChanges[i].doc.data()!;
-      tablaUsuarios[usuariosDescargados.docChanges[i].doc.id] = temp;
-
-      if (_ubicacionActual != null &&
-          estaEnRadio(temp.geoloc.latitude, temp.geoloc.longitude, 5)) {
-        Marker marcadorTemp = Marker(
-          markerId: MarkerId(usuariosDescargados.docChanges[i].doc.id),
-          position: LatLng(temp.geoloc.latitude, temp.geoloc.longitude),
-          infoWindow: InfoWindow(
-            title: temp.nombre,
-            snippet: "Fecha nacimiento: ${temp.fechaNacimiento}",
-          ),
-        );
-        marcTemp.add(marcadorTemp);
-      }
+      Marker marcadorTemp = Marker(
+        markerId: MarkerId(perfilesDescargados.docChanges[i].doc.id),
+        position: LatLng(temp.geoloc.latitude, temp.geoloc.longitude),
+        infoWindow: InfoWindow(
+          title: fbAdmin.auth.currentUser?.displayName,
+          snippet: fbAdmin.auth.currentUser?.email ?? fbAdmin.auth.currentUser?.phoneNumber,
+        ),
+      );
+      marcTemp.add(marcadorTemp);
     }
 
+    // Verificar si el widget está montado antes de llamar a setState
     if (mounted) {
       setState(() {
         marcadores.addAll(marcTemp);
@@ -87,25 +79,12 @@ class MapaViewState extends State<MapaView> {
     }
   }
 
-  void descargaUsuariosError(error) {
+  void descargaUsuariosError(error){
     print("Listen failed: $error");
   }
 
-  bool estaEnRadio(double latitud, double longitud, double radio) {
-    if (_ubicacionActual == null) {
-      return false;
-    }
-
-    double distancia = Geolocator.distanceBetween(
-      _ubicacionActual!.latitude,
-      _ubicacionActual!.longitude,
-      latitud,
-      longitud,
-    );
-
-    double distanciaEnKilometros = distancia / 1000;
-
-    return distanciaEnKilometros <= radio;
+  void _onMapCreated(GoogleMapController controller) {
+    _controller = controller;
   }
 
   void cambiarTipoMapa(MapType nuevoTipoMapa) {
@@ -172,16 +151,8 @@ class MapaViewState extends State<MapaView> {
           child: _ubicacionActual != null
               ? GoogleMap(
             mapType: _tipoMapa,
-            initialCameraPosition: CameraPosition(
-              target: LatLng(
-                _ubicacionActual!.latitude,
-                _ubicacionActual!.longitude,
-              ),
-              zoom: 15.0,
-            ),
-            onMapCreated: (GoogleMapController controller) {
-              _controller = controller;
-            },
+            initialCameraPosition: _kUser,
+            onMapCreated: _onMapCreated,
             markers: marcadores,
           )
               : const CircularProgressIndicator(),

@@ -36,11 +36,12 @@ class _HomeViewState extends State<HomeView> {
     descargarActividades();
     if (!PlatformAdmin.isWebPlatform()) {
       await determinarPosicionActual();
+      DataHolder().suscribeACambiosGPSUsuario();
     }
   }
 
   Future<void> determinarPosicionActual() async {
-    final positionTemp = await geolocAdmin.determinePosition();
+    final positionTemp = await DataHolder().geolocAdmin.determinePosition();
     setState(() {
       position = positionTemp;
     });
