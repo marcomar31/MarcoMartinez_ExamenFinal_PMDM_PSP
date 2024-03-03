@@ -30,50 +30,53 @@ class ActividadesGridView extends StatelessWidget {
           onTap: () {
             onPressed!(index);
           },
-          child: Container(
-            color: const Color.fromRGBO(22, 36, 71, 1),
-            child: Stack(
-              children: [
-                if (actividades[index].imagenUrl.isNotEmpty) ...[
-                  SizedBox(
-                    width: double.infinity,
-                    child: Image.network(
-                      actividades[index].imagenUrl,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      color: Colors.black.withOpacity(0.5),
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        actividades[index].nombre,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12.0,
-                        ),
-                        textAlign: TextAlign.center,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: Container(
+              color: const Color.fromRGBO(22, 36, 71, 1),
+              child: Stack(
+                children: [
+                  if (actividades[index].imagenUrl.isNotEmpty) ...[
+                    SizedBox(
+                      width: double.infinity,
+                      child: Image.network(
+                        actividades[index].imagenUrl,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                  ),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        color: Colors.black.withOpacity(0.5),
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          actividades[index].nombre,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12.0,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
+                  if (!actividades[index].imagenUrl.isNotEmpty)
+                    Center(
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          actividades[index].nombre,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
-                if (!actividades[index].imagenUrl.isNotEmpty)
-                  Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        actividades[index].nombre,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
+              ),
             ),
           ),
         );

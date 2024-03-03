@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:marcomartinez_examenfinal/FirestoreObjects/FActividad.dart';
 import 'package:marcomartinez_examenfinal/Singleton/DataHolder.dart';
+import 'package:marcomartinez_examenfinal/Singleton/PlatformAdmin.dart';
 
 class ActividadView extends StatefulWidget {
-  const ActividadView({super.key,});
+  const ActividadView({super.key});
 
   @override
   _ActividadViewState createState() => _ActividadViewState();
@@ -11,35 +12,101 @@ class ActividadView extends StatefulWidget {
 
 class _ActividadViewState extends State<ActividadView> {
   FActividad? actividad = DataHolder().selectedActivity;
+
   @override
   Widget build(BuildContext context) {
+    double anchoImagen = PlatformAdmin.getScreenWidth(context)-40;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(actividad?.nombre ?? ""),
+        title: Text(
+          actividad?.nombre ?? "",
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: const Color.fromRGBO(2, 25, 52, 1.0),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: const Icon(Icons.arrow_back_rounded),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
+      backgroundColor: const Color.fromRGBO(10, 35, 65, 1.0),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Mostrar información de la actividad
+              Container(
+                width: anchoImagen,
+                height: anchoImagen,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(20),
+                  image: actividad!.imagenUrl.isNotEmpty
+                      ? DecorationImage(
+                    image: NetworkImage(actividad!.imagenUrl),
+                    fit: BoxFit.cover,
+                  )
+                      : null,
+                ),
+                child: actividad!.imagenUrl.isEmpty
+                    ? Icon(Icons.image, size: anchoImagen/2, color: Colors.white)
+                    : null,
+              ),
+              const SizedBox(height: 30,),
               const Text(
                 'Descripción:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
               Text(
                 actividad?.descripcion ?? "",
-                style: const TextStyle(fontSize: 16),
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
               ),
               const SizedBox(height: 20),
               const Text(
                 'Fecha:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
               Text(
-                actividad?.fecha.toString() ?? "",
-                style: const TextStyle(fontSize: 16),
+                "${actividad?.fecha.day.toString().padLeft(2, '0')}/${actividad?.fecha.month.toString().padLeft(2, '0')}/${actividad?.fecha.year.toString()}",
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Precio:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              Text(
+                "${actividad?.precio.toString() ?? ""} €",
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
               ),
             ],
           ),
