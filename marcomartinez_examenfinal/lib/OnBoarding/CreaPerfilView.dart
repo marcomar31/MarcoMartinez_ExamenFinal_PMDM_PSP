@@ -226,7 +226,7 @@ class _CreaPerfilViewState extends State<CreaPerfilView> {
       }
       FProfile perfil = FProfile(nombre: nombre, apellidos: apellidos, fechaNacimiento: _fechaSeleccionada);
       await fbAdmin.creaPerfilUsuario(perfil);
-
+      await DataHolder().getProfile();
       Navigator.of(context).popAndPushNamed("/home_view");
     } else {
       showDialog(

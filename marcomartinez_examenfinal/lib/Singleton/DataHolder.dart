@@ -20,4 +20,8 @@ class DataHolder {
 
   }
 
+  Future<void> getProfile() async {
+    perfil = (await fbAdmin.descargarPerfil())!;
+  }
+
 }

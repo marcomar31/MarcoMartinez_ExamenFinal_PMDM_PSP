@@ -86,7 +86,7 @@ class _HomeViewState extends State<HomeView> {
               blIsList = false;
             });
           } else if (index == 3) {
-            // Navigator.of(context).pushNamed("/perfil_view");
+            Navigator.of(context).pushNamed("/perfil_view");
           }
         },
         items: const [
