@@ -24,7 +24,7 @@ class MapaViewState extends State<MapaView> {
   @override
   void initState() {
     obtenerUbicacionActual();
-    suscribirADescargaUsuarios();
+    suscribirADescargaUsuarioActual();
     super.initState();
   }
 
@@ -42,42 +42,40 @@ class MapaViewState extends State<MapaView> {
     });
   }
 
-  void suscribirADescargaUsuarios() async{
-    CollectionReference<FProfile> ref = fbAdmin.db.collection("Perfiles")
-        .withConverter(fromFirestore: FProfile
-        .fromFirestore,
-      toFirestore: (FProfile user, _) => user.toFirestore(),);
-    ref.snapshots().listen(usuariosDescargados, onError: descargaUsuariosError,);
-  }
+  void suscribirADescargaUsuarioActual() async {
+    String userId = fbAdmin.auth.currentUser?.uid ?? '';
 
-  void usuariosDescargados(QuerySnapshot<FProfile> perfilesDescargados) {
-    print("NUMERO DE USUARIOS ACTUALIZADOS>>>> " +
-        perfilesDescargados.docChanges.length.toString());
+    if (userId.isNotEmpty) {
+      DocumentReference<FProfile> userRef = fbAdmin.db.collection("Perfiles").doc(userId)
+          .withConverter(fromFirestore: FProfile.fromFirestore, toFirestore: (FProfile user, _) => user.toFirestore());
 
-    Set<Marker> marcTemp = Set();
+      userRef.snapshots().listen((DocumentSnapshot<FProfile> snapshot) {
+        if (snapshot.exists) {
+          FProfile user = snapshot.data()!;
 
-    for (int i = 0; i < perfilesDescargados.docChanges.length; i++) {
-      FProfile temp = perfilesDescargados.docChanges[i].doc.data()!;
-      tablaPerfiles[perfilesDescargados.docChanges[i].doc.id] = temp;
+          Marker marker = Marker(
+            markerId: MarkerId(userId),
+            position: LatLng(user.geoloc.latitude, user.geoloc.longitude),
+            infoWindow: InfoWindow(
+              title: user.nombre,
+              snippet: fbAdmin.auth.currentUser?.displayName ?? fbAdmin.auth.currentUser?.email,
+            ),
+          );
 
-      Marker marcadorTemp = Marker(
-        markerId: MarkerId(perfilesDescargados.docChanges[i].doc.id),
-        position: LatLng(temp.geoloc.latitude, temp.geoloc.longitude),
-        infoWindow: InfoWindow(
-          title: fbAdmin.auth.currentUser?.displayName,
-          snippet: fbAdmin.auth.currentUser?.email ?? fbAdmin.auth.currentUser?.phoneNumber,
-        ),
-      );
-      marcTemp.add(marcadorTemp);
-    }
-
-    // Verificar si el widget está montado antes de llamar a setState
-    if (mounted) {
-      setState(() {
-        marcadores.addAll(marcTemp);
+          if (mounted) {
+            setState(() {
+              marcadores.clear();
+              marcadores.add(marker);
+              print("Marcador agregado: $marker");
+            });
+          }
+        }
+      }, onError: (error) {
+        print("Error al descargar el perfil del usuario actual: $error");
       });
     }
   }
+
 
   void descargaUsuariosError(error){
     print("Listen failed: $error");
