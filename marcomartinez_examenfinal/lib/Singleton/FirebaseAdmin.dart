@@ -18,7 +18,7 @@ class FirebaseAdmin {
       if (email.contains("@")) {
         if (password == rePassword) {
           try {
-            auth.createUserWithEmailAndPassword(email: email, password: password);
+            await auth.createUserWithEmailAndPassword(email: email, password: password);
             print("Creado");
             return true;
           } catch (e) {
@@ -85,7 +85,7 @@ class FirebaseAdmin {
   }
 
   Future<void> signOutUsuario() async {
-    await FirebaseAuth.instance.signOut();
+    await auth.signOut();
   }
 
   Future<void> creaPerfilUsuario(FProfile profile) async {
@@ -93,7 +93,7 @@ class FirebaseAdmin {
   }
 
   void actualizarPerfilUsuario(FProfile perfil) async{
-    await db.collection("Perfiles").doc(auth.currentUser?.uid).set(perfil.toFirestore());
+    await db.collection("Perfiles").doc(auth.currentUser?.uid).update(perfil.toFirestore());
   }
 
   Future<FProfile?> descargarPerfil() async {
