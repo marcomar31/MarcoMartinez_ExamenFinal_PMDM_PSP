@@ -28,6 +28,8 @@ class _CreaActividadViewState extends State<CreaActividadView> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = PlatformAdmin.getScreenWidth(context);
+
     return Scaffold(
       backgroundColor: const Color.fromRGBO(10, 35, 65, 1.0),
       appBar: AppBar(
@@ -47,7 +49,7 @@ class _CreaActividadViewState extends State<CreaActividadView> {
           child: Column(
             children: [
               SizedBox(
-                width: MediaQuery.of(context).size.width - 50,
+                width: (screenWidth < 600) ? PlatformAdmin.getScreenWidth(context)-50 : 600,
                 child: Container(
                   margin: const EdgeInsets.only(top: 20, bottom: 20),
                   decoration: BoxDecoration(

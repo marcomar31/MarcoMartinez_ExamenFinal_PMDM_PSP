@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../Singleton/PlatformAdmin.dart';
+
 class ActividadesListView extends StatelessWidget {
   final String sText;
   final double dFontSize;
@@ -30,17 +32,23 @@ class ActividadesListView extends StatelessWidget {
             if (imageUrl != null)
               Padding(
                 padding: const EdgeInsets.only(right: 15.0),
-                child: Container(
+                child: PlatformAdmin.isWebPlatform()
+                ? SizedBox(
                     width: 50,
                     height: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      image: DecorationImage(
-                        image: NetworkImage(imageUrl!),
-                        fit: BoxFit.cover,
-                      ),
+                    // child: createImageCodecFromUrl(),
+                  )
+                : Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    image: DecorationImage(
+                      image: NetworkImage(imageUrl!),
+                      fit: BoxFit.cover,
                     ),
                   ),
+                ),
                 ),
             Expanded(
               child: Text(

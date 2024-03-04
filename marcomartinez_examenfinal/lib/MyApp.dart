@@ -11,29 +11,52 @@ import 'Main/HomeView.dart';
 import 'Main/PerfilView.dart';
 import 'OnBoarding/LoginView.dart';
 import 'OnBoarding/RegisterView.dart';
+import 'Singleton/PlatformAdmin.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: "Examen Marco 2Ev",
-      routes: {
-        '/onboarding_view': (context) => OnBoarding(),
-        '/login_view': (context) => const LoginView(),
-        '/register_view': (context) => RegisterView(),
-        '/creaperfil_view': (context) => const CreaPerfilView(),
-        '/home_view': (context) => const HomeView(),
-        '/boredapi_view': (context) => BoredApiView(),
-        '/configuracion_view': (context) => const ConfiguracionView(),
-        '/creaactividad_view': (context) => const CreaActividadView(),
-        '/perfil_view': (context) => const PerfilView(),
-        '/actividad_view': (context) => const ActividadView(),
-        '/mapa_view': (context) => const MapaView(),
-      },
-      initialRoute: '/onboarding_view',
-      debugShowCheckedModeBanner: false,
-    );
+    MaterialApp materialApp = const MaterialApp();
+    if(PlatformAdmin.isAndroidPlatform() || PlatformAdmin.isIOSPlatform()) {
+      materialApp = MaterialApp(title: "Examen Marco 2Ev",
+        routes: {
+          '/onboarding_view': (context) => OnBoarding(),
+          '/login_view': (context) => const LoginView(),
+          '/register_view': (context) => RegisterView(),
+          '/creaperfil_view': (context) => const CreaPerfilView(),
+          '/home_view': (context) => const HomeView(),
+          '/boredapi_view': (context) => BoredApiView(),
+          '/configuracion_view': (context) => const ConfiguracionView(),
+          '/creaactividad_view': (context) => const CreaActividadView(),
+          '/perfil_view': (context) => const PerfilView(),
+          '/actividad_view': (context) => const ActividadView(),
+          '/mapa_view': (context) => const MapaView(),
+        },
+        initialRoute: '/onboarding_view',
+        debugShowCheckedModeBanner: false,
+      );
+    } else if (PlatformAdmin.isWebPlatform()) {
+      materialApp = MaterialApp(title: "Examen Marco 2Ev",
+        routes: {
+          '/onboarding_view': (context) => OnBoarding(),
+          '/login_view': (context) => const LoginView(),
+          '/register_view': (context) => RegisterView(),
+          '/creaperfil_view': (context) => const CreaPerfilView(),
+          '/home_view': (context) => const HomeView(),
+          '/boredapi_view': (context) => BoredApiView(),
+          '/configuracion_view': (context) => const ConfiguracionView(),
+          '/creaactividad_view': (context) => const CreaActividadView(),
+          '/perfil_view': (context) => const PerfilView(),
+          '/actividad_view': (context) => const ActividadView(),
+        },
+        initialRoute: '/onboarding_view',
+        debugShowCheckedModeBanner: false,
+      );
+    }
+
+    return materialApp;
   }
   
 }

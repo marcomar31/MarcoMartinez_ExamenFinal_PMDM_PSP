@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:marcomartinez_examenfinal/Singleton/DataHolder.dart';
 
 import '../Singleton/FirebaseAdmin.dart';
+import '../Singleton/PlatformAdmin.dart';
 
 class MainDrawer extends StatefulWidget {
   @override
@@ -80,6 +81,7 @@ class _MainDrawerState extends State<MainDrawer> {
               Navigator.of(context).pushReplacementNamed("/home_view");
             },
           ),
+          if (!PlatformAdmin.isWebPlatform())
           ListTile(
             leading: const Icon(Icons.map_rounded),
             title: const Text('Mapa'),
