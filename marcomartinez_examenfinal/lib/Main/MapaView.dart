@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:marcomartinez_examenfinal/FirestoreObjects/FActividad.dart';
 import 'package:marcomartinez_examenfinal/FirestoreObjects/FProfile.dart';
 import 'package:marcomartinez_examenfinal/Singleton/FirebaseAdmin.dart';
 
@@ -67,7 +68,7 @@ class MapaViewState extends State<MapaView> {
             setState(() {
               marcadores.clear();
               marcadores.add(marker);
-              print("Marcador agregado: $marker");
+              print("Marcador de usuario agregado: $marker");
             });
           }
         }
@@ -75,6 +76,40 @@ class MapaViewState extends State<MapaView> {
         print("Error al descargar el perfil del usuario actual: $error");
       });
     }
+
+    CollectionReference<FActividad> actividadesRef = fbAdmin.db.collection("Actividades")
+        .withConverter(fromFirestore: FActividad.fromFirestore, toFirestore: (FActividad actividad, _) => actividad.toFirestore());
+
+    actividadesRef.snapshots().listen((QuerySnapshot<FActividad> snapshot) {
+      Marker marker;
+      if (snapshot.docs.isNotEmpty) {
+        List<Marker> nuevosMarcadores = [];
+        for (var doc in snapshot.docs) {
+          FActividad actividad = doc.data();
+          if (actividad.geoloc != null) {
+            marker = Marker(
+              markerId: MarkerId(doc.id),
+              position: LatLng(actividad.geoloc!.latitude, actividad.geoloc!.longitude),
+              infoWindow: InfoWindow(
+                title: actividad.nombre,
+                snippet: "${actividad.precio} €",
+              ),
+              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+            );
+            nuevosMarcadores.add(marker);
+          }
+        }
+
+        setState(() {
+          if (nuevosMarcadores.isNotEmpty) {
+            marcadores.addAll(nuevosMarcadores);
+          }
+          print("Marcadores de actividades agregados: $nuevosMarcadores");
+        });
+      }
+    }, onError: (error) {
+      print("Error al descargar las actividades: $error");
+    });
   }
 
 
