@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../CustomizedObjects/Buttons.dart';
 import '../CustomizedObjects/TextFormFields.dart';
@@ -14,6 +15,9 @@ class PhoneLoginView extends StatefulWidget {
 
 class _PhoneLoginViewState extends State<PhoneLoginView> {
   FirebaseAdmin fbAdmin = FirebaseAdmin();
+  late GlobalKey<FormState> _formKey1;
+  late GlobalKey<FormState> _formKey2;
+
 
   TextEditingController tecTelefono = TextEditingController();
   TextEditingController tecCodigo = TextEditingController();
@@ -22,28 +26,37 @@ class _PhoneLoginViewState extends State<PhoneLoginView> {
   bool blMostrarVerificacion = false;
 
   void enviarTelefonoClicked() async {
-    String sTelefono = tecTelefono.text;
-    if (sTelefono.isNotEmpty) {
-      await fbAdmin.verificarTelefono(
-          sTelefono,
-          verificacionCompletada,
-          verificacionFallida,
-          codeSent,
-          codeAutoRetrievalTimeout
-      );
+    await SystemChannels.textInput
+        .invokeMethod('TextInput.hide');
+    if (_formKey1.currentState!.validate()) {
+      String sTelefono = tecTelefono.text;
+      if (sTelefono.isNotEmpty) {
+        await fbAdmin.verificarTelefono(
+            sTelefono,
+            verificacionCompletada,
+            verificacionFallida,
+            codeSent,
+            codeAutoRetrievalTimeout
+        );
+      }
     }
   }
 
   Future<void> enviarVerificacionClicked() async {
-    String smsCode = tecCodigo.text;
+    await SystemChannels.textInput
+        .invokeMethod('TextInput.hide');
+    if (_formKey2.currentState!.validate()) {
+      String smsCode = tecCodigo.text;
 
-    PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: sVerificationCode, smsCode: smsCode);
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+          verificationId: sVerificationCode, smsCode: smsCode);
 
-    if (await fbAdmin.signInWithPhoneNumber(credential)) {
-      if (await fbAdmin.descargarPerfil() != null) {
-        Navigator.of(context).popAndPushNamed("/home_view");
-      } else {
-        Navigator.of(context).popAndPushNamed("/creaperfil_view");
+      if (await fbAdmin.signInWithPhoneNumber(credential)) {
+        if (await fbAdmin.descargarPerfil() != null) {
+          Navigator.of(context).popAndPushNamed("/home_view");
+        } else {
+          Navigator.of(context).popAndPushNamed("/creaperfil_view");
+        }
       }
     }
   }
@@ -71,6 +84,13 @@ class _PhoneLoginViewState extends State<PhoneLoginView> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _formKey1 = GlobalKey<FormState>();
+    _formKey2 = GlobalKey<FormState>();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: SizedBox(
@@ -91,9 +111,12 @@ class _PhoneLoginViewState extends State<PhoneLoginView> {
                 ),
               ),
               const SizedBox(height: 32),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: OnBoardingFormField(tec: tecTelefono, label: "Número de teléfono", isPassword: false),
+              Form(
+                key: _formKey1,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: OnBoardingFormField(tec: tecTelefono, label: "Número de teléfono", isPassword: false, mensajeError: "Introduzca su número de teléfono, incluído el prefijo"),
+                ),
               ),
               if (blMostrarVerificacion)
                 const Padding(
@@ -115,9 +138,12 @@ class _PhoneLoginViewState extends State<PhoneLoginView> {
                 ],
               ),
               if (blMostrarVerificacion)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: OnBoardingFormField(tec: tecCodigo, label: "Código de verificación", isPassword: false),
+                Form(
+                  key: _formKey2,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: OnBoardingFormField(tec: tecCodigo, label: "Código de verificación", isPassword: false, mensajeError: "Introduzca el código de verificación recibido por SMS"),
+                  ),
                 ),
               if (blMostrarVerificacion)
                 Row(

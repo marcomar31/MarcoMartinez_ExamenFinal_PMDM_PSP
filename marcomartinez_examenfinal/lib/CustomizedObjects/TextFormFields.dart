@@ -6,6 +6,7 @@ class OnBoardingFormField extends StatelessWidget {
   final bool isPassword;
   final IconData? icon;
   final Color? iconColor;
+  final String? mensajeError;
 
   const OnBoardingFormField({
     Key? key,
@@ -14,6 +15,7 @@ class OnBoardingFormField extends StatelessWidget {
     required this.isPassword,
     this.icon,
     this.iconColor,
+    this.mensajeError
   }) : super(key: key);
 
   @override
@@ -40,6 +42,12 @@ class OnBoardingFormField extends StatelessWidget {
               cursorColor: const Color.fromRGBO(35, 41, 49, 1),
               cursorHeight: 25,
               obscureText: isPassword,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return mensajeError;
+                }
+                return null;
+              },
             ),
           ),
         ],

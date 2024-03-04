@@ -17,6 +17,8 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final BuildContext _context;
 
+  late GlobalKey<FormState> _formKey;
+
   final FirebaseAdmin fbAdmin = FirebaseAdmin();
   final TextEditingController tecEmail = TextEditingController();
   final TextEditingController tecPassword = TextEditingController();
@@ -25,6 +27,7 @@ class _LoginViewState extends State<LoginView> {
   void initState() {
     super.initState();
     _context = context;
+    _formKey = GlobalKey<FormState>();
   }
 
   @override
@@ -44,69 +47,74 @@ class _LoginViewState extends State<LoginView> {
               borderRadius: BorderRadius.circular(20),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: OnBoardingFormField(
-                    tec: tecEmail,
-                    label: "Email",
-                    isPassword: false,
-                    icon: Icons.email_rounded,
-                    iconColor: const Color.fromRGBO(115, 208, 156, 1.0),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: OnBoardingFormField(
-                    tec: tecPassword,
-                    label: "Password",
-                    isPassword: true,
-                    icon: Icons.lock_rounded,
-                    iconColor: const Color.fromRGBO(115, 208, 156, 1.0),
-                  ),
-                ),
-                if (PlatformAdmin.isAndroidPlatform() ||
-                    PlatformAdmin.isIOSPlatform())
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: GestureDetector(
-                      child: const Text(
-                        'Iniciar sesión con número de teléfono',
-                        style: TextStyle(
-                          color: Color.fromRGBO(115, 208, 156, 1.0),
-                          decoration: TextDecoration.underline,
-                          decorationColor: Color.fromRGBO(115, 208, 156, 1.0),
-                        ),
-                      ),
-                      onTap: () async {
-                        await SystemChannels.textInput
-                            .invokeMethod('TextInput.hide');
-                        showModalBottomSheet(
-                          context: context,
-                          isDismissible: false,
-                          builder: (BuildContext context) {
-                            return const PhoneLoginView();
-                          },
-                        );
-                      },
+                    child: OnBoardingFormField(
+                      tec: tecEmail,
+                      label: "Email",
+                      isPassword: false,
+                      icon: Icons.email_rounded,
+                      iconColor: const Color.fromRGBO(115, 208, 156, 1.0),
+                      mensajeError: "Por favor, ingresa su email",
                     ),
                   ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: OnBoardingFormField(
+                      tec: tecPassword,
+                      label: "Password",
+                      isPassword: true,
+                      icon: Icons.lock_rounded,
+                      iconColor: const Color.fromRGBO(115, 208, 156, 1.0),
+                      mensajeError: "Por favor, ingrese su contraseña",
+                    ),
+                  ),
+                  if (PlatformAdmin.isAndroidPlatform() ||
+                      PlatformAdmin.isIOSPlatform())
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: RoundedGreenButton(
-                        text: "LOGIN",
-                        function: _iniciarSesion,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: GestureDetector(
+                        child: const Text(
+                          'Iniciar sesión con número de teléfono',
+                          style: TextStyle(
+                            color: Color.fromRGBO(115, 208, 156, 1.0),
+                            decoration: TextDecoration.underline,
+                            decorationColor: Color.fromRGBO(115, 208, 156, 1.0),
+                          ),
+                        ),
+                        onTap: () async {
+                          await SystemChannels.textInput
+                              .invokeMethod('TextInput.hide');
+                          showModalBottomSheet(
+                            context: context,
+                            isDismissible: false,
+                            builder: (BuildContext context) {
+                              return const PhoneLoginView();
+                            },
+                          );
+                        },
                       ),
                     ),
-                  ],
-                ),
-              ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: RoundedGreenButton(
+                          text: "LOGIN",
+                          function: _iniciarSesion,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         )
@@ -120,11 +128,13 @@ class _LoginViewState extends State<LoginView> {
   }
 
   Future<void> _iniciarSesion() async {
-    if (await fbAdmin.logInWithEmail(tecEmail.text, tecPassword.text)) {
-      if (await fbAdmin.descargarPerfil() != null) {
-        Navigator.of(_context).popAndPushNamed("/home_view");
-      } else {
-        Navigator.of(_context).popAndPushNamed("/creaperfil_view");
+    if (_formKey.currentState!.validate()) {
+      if (await fbAdmin.logInWithEmail(tecEmail.text, tecPassword.text)) {
+        if (await fbAdmin.descargarPerfil() != null) {
+          Navigator.of(_context).popAndPushNamed("/home_view");
+        } else {
+          Navigator.of(_context).popAndPushNamed("/creaperfil_view");
+        }
       }
     }
   }

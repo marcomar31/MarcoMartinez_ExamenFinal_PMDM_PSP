@@ -5,15 +5,28 @@ import 'package:marcomartinez_examenfinal/Singleton/FirebaseAdmin.dart';
 import '../CustomizedObjects/Buttons.dart';
 import '../Singleton/PlatformAdmin.dart';
 
-class RegisterView extends StatelessWidget {
+class RegisterView extends StatefulWidget {
   RegisterView({super.key});
 
+  @override
+  _RegisterViewState createState() => _RegisterViewState();
+}
+
+class _RegisterViewState extends State<RegisterView> {
   late BuildContext _context = _context;
+
+  late GlobalKey<FormState> _formKey;
 
   FirebaseAdmin fbAdmin = FirebaseAdmin();
   TextEditingController tecEmail = TextEditingController();
   TextEditingController tecPassword = TextEditingController();
   TextEditingController tecRePassword = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _formKey = GlobalKey<FormState>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,32 +44,35 @@ class RegisterView extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: OnBoardingFormField(tec: tecEmail, label: "Email", isPassword: false, icon: Icons.email_rounded, iconColor: const Color.fromRGBO(115, 208, 156, 1.0),),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: OnBoardingFormField(tec: tecPassword, label: "Password", isPassword: true, icon: Icons.lock_rounded, iconColor: const Color.fromRGBO(115, 208, 156, 1.0),),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: OnBoardingFormField(tec: tecRePassword, label: "Repeat password", isPassword: true, icon: Icons.lock_rounded, iconColor: const Color.fromRGBO(115, 208, 156, 1.0),),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: RoundedGreenButton(text: "REGISTRARSE", function: _creaUsuario),
-                    ),
-                  ],
-                ),
-              ],
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: OnBoardingFormField(tec: tecEmail, label: "Email", isPassword: false, icon: Icons.email_rounded, iconColor: const Color.fromRGBO(115, 208, 156, 1.0), mensajeError: "Por favor, ingrese su email"),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: OnBoardingFormField(tec: tecPassword, label: "Password", isPassword: true, icon: Icons.lock_rounded, iconColor: const Color.fromRGBO(115, 208, 156, 1.0), mensajeError: "Por favor, ingrese su contraseña"),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: OnBoardingFormField(tec: tecRePassword, label: "Repeat password", isPassword: true, icon: Icons.lock_rounded, iconColor: const Color.fromRGBO(115, 208, 156, 1.0), mensajeError: "Repita su contraseña"),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: RoundedGreenButton(text: "REGISTRARSE", function: _creaUsuario),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         )
@@ -70,6 +86,9 @@ class RegisterView extends StatelessWidget {
   }
 
   Future<void> _creaUsuario() async {
-    await fbAdmin.createUser(tecEmail.text, tecPassword.text, tecRePassword.text);
+    if (_formKey.currentState!.validate()) {
+      await fbAdmin.createUser(
+          tecEmail.text, tecPassword.text, tecRePassword.text);
+    }
   }
 }
