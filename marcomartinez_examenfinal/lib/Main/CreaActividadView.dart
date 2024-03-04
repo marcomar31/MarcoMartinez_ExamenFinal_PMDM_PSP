@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:marcomartinez_examenfinal/CustomizedObjects/Buttons.dart';
 import 'package:marcomartinez_examenfinal/FirestoreObjects/FActividad.dart';
@@ -8,6 +10,7 @@ import 'package:marcomartinez_examenfinal/FirestoreObjects/FActividad.dart';
 import '../CustomizedObjects/TextFormFields.dart';
 import '../Singleton/FirebaseAdmin.dart';
 import '../Singleton/PlatformAdmin.dart';
+import 'SeleccionarUbicacionView.dart';
 
 class CreaActividadView extends StatefulWidget {
   const CreaActividadView({Key? key}) : super(key: key);
@@ -25,6 +28,7 @@ class _CreaActividadViewState extends State<CreaActividadView> {
   DateTime _fechaSeleccionada = DateTime.now();
   final ImagePicker _picker = ImagePicker();
   File? _imagePreview;
+  LatLng? _ubicacionSeleccionada = null;
 
   @override
   Widget build(BuildContext context) {
@@ -180,6 +184,17 @@ class _CreaActividadViewState extends State<CreaActividadView> {
                           ),
                         ),
                       ),
+                      ElevatedButton(
+                        onPressed: () async {
+                            _ubicacionSeleccionada = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SeleccionarUbicacionView(),
+                            ),
+                          );
+                        },
+                        child: const Text('Seleccionar Ubicación en el Mapa'),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -230,16 +245,34 @@ class _CreaActividadViewState extends State<CreaActividadView> {
       if (_imagePreview != null ) {
         rutaDescarga = await fbAdmin.uploadImageToStorage(rutaNube, _imagePreview!);
       }
-          FActividad fActividad = FActividad(
-            nombre: nombre,
-            descripcion: descripcion,
-            precio: precio,
-            fecha: _fechaSeleccionada,
-            imagenUrl: rutaDescarga,
-          );
 
-        await fbAdmin.subirActividad(fActividad);
-        Navigator.pop(context);
+      FActividad fActividad;
+
+      final _ubicacionSeleccionada = this._ubicacionSeleccionada;
+      if (_ubicacionSeleccionada != null) {
+        double latitud = _ubicacionSeleccionada.latitude;
+        double longitud = _ubicacionSeleccionada.longitude;
+
+        fActividad = FActividad(
+          nombre: nombre,
+          descripcion: descripcion,
+          precio: precio,
+          fecha: _fechaSeleccionada,
+          imagenUrl: rutaDescarga,
+          geoloc: GeoPoint(latitud, longitud),
+        );
+      } else {
+        fActividad = FActividad(
+          nombre: nombre,
+          descripcion: descripcion,
+          precio: precio,
+          fecha: _fechaSeleccionada,
+          imagenUrl: rutaDescarga,
+        );
+      }
+
+      await fbAdmin.subirActividad(fActividad);
+      Navigator.pop(context);
     } else {
       print('Por favor rellena todos los campos');
     }

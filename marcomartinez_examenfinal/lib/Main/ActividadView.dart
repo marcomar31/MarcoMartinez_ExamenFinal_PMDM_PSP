@@ -108,6 +108,25 @@ class _ActividadViewState extends State<ActividadView> {
                   color: Colors.white,
                 ),
               ),
+              if (actividad?.geoloc != null)
+              const SizedBox(height: 20),
+              if (actividad?.geoloc != null)
+                const Text(
+                'Ubicación:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              if (actividad?.geoloc != null)
+                Text(
+                "${actividad?.geoloc?.longitude ?? ""}, ${actividad?.geoloc?.latitude ?? ""}",
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
             ],
           ),
         ),

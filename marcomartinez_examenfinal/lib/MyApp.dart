@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     MaterialApp materialApp = const MaterialApp();
     if(PlatformAdmin.isAndroidPlatform() || PlatformAdmin.isIOSPlatform()) {
-      materialApp = MaterialApp(title: "Examen Marco 2Ev",
+      materialApp = MaterialApp(title: "Examen Marco 2Ev (Móvil)",
         routes: {
           '/onboarding_view': (context) => OnBoarding(),
           '/login_view': (context) => const LoginView(),
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
       );
     } else if (PlatformAdmin.isWebPlatform()) {
-      materialApp = MaterialApp(title: "Examen Marco 2Ev",
+      materialApp = MaterialApp(title: "Examen Marco 2Ev (Web)",
         routes: {
           '/onboarding_view': (context) => OnBoarding(),
           '/login_view': (context) => const LoginView(),
