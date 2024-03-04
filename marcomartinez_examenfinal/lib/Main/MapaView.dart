@@ -57,9 +57,10 @@ class MapaViewState extends State<MapaView> {
             markerId: MarkerId(userId),
             position: LatLng(user.geoloc.latitude, user.geoloc.longitude),
             infoWindow: InfoWindow(
-              title: user.nombre,
-              snippet: fbAdmin.auth.currentUser?.displayName ?? fbAdmin.auth.currentUser?.email,
+              title: fbAdmin.auth.currentUser?.displayName ?? "NOMBRE DE USUARIO",
+              snippet: fbAdmin.auth.currentUser?.email ?? fbAdmin.auth.currentUser?.phoneNumber,
             ),
+            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
           );
 
           if (mounted) {
