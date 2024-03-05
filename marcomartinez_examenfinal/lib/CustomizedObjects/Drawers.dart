@@ -110,7 +110,7 @@ class _MainDrawerState extends State<MainDrawer> {
             leading: const Icon(Icons.logout_rounded),
             title: const Text('Cerrar sesión'),
             onTap: () async {
-                await fbAdmin.signOutUsuario();
+                await fbAdmin.signOutUsuario(context);
                 Navigator.of(context).pop();
                 Navigator.of(context).pushNamed("/onboarding_view");
             },

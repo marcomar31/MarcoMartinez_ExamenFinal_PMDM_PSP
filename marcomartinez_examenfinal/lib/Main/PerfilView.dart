@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:marcomartinez_examenfinal/CustomizedObjects/TextFormFields.dart';
 import 'package:marcomartinez_examenfinal/FirestoreObjects/FProfile.dart';
@@ -25,6 +24,8 @@ class _PerfilViewState extends State<PerfilView> {
   late User usuarioActual;
   late FProfile perfilUsuario;
 
+  late GlobalKey<FormState> _formKey;
+
   TextEditingController tecNombreUsuario = TextEditingController();
   TextEditingController tecNombre = TextEditingController();
   TextEditingController tecApellidos = TextEditingController();
@@ -37,6 +38,7 @@ class _PerfilViewState extends State<PerfilView> {
   @override
   void initState() {
     super.initState();
+    _formKey = GlobalKey<FormState>();
     usuarioActual = fbAdmin.auth.currentUser!;
     perfilUsuario = DataHolder().perfil!;
     tecNombreUsuario.text = usuarioActual.displayName ?? "";
@@ -121,127 +123,130 @@ class _PerfilViewState extends State<PerfilView> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('AVATAR DE USUARIO'),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if(!PlatformAdmin.isWebPlatform())
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('AVATAR DE USUARIO'),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if(!PlatformAdmin.isWebPlatform())
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          onPressedCamera();
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text("Tomar foto"),
+                                      ),
+                                    const SizedBox(height: 12),
                                     ElevatedButton(
                                       onPressed: () {
-                                        onPressedCamera();
+                                        onPressedGallery();
                                         Navigator.pop(context);
                                       },
-                                      child: const Text("Tomar foto"),
+                                      child: const Text("Seleccionar de la galería"),
                                     ),
-                                  const SizedBox(height: 12),
+                                  ],
+                                ),
+                                actions: [
                                   ElevatedButton(
                                     onPressed: () {
-                                      onPressedGallery();
+                                      setState(() {
+                                        _imagePreview = null;
+                                        circleAvatar = const CircleAvatar(
+                                            radius: 70,
+                                            backgroundColor: Colors.grey,
+                                            backgroundImage: null,
+                                            child: Icon(
+                                              Icons.person_rounded,
+                                              size: 70,
+                                              color: Colors.white,
+                                            )
+                                        );
+                                      });
                                       Navigator.pop(context);
                                     },
-                                    child: const Text("Seleccionar de la galería"),
+                                    child: const Text("Eliminar"),
                                   ),
                                 ],
                               ),
-                              actions: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _imagePreview = null;
-                                      circleAvatar = const CircleAvatar(
-                                          radius: 70,
-                                          backgroundColor: Colors.grey,
-                                          backgroundImage: null,
-                                          child: Icon(
-                                            Icons.person_rounded,
-                                            size: 70,
-                                            color: Colors.white,
-                                          )
-                                      );
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text("Eliminar"),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        child: Stack(
-                          children: [
-                            circleAvatar,
-                            Positioned(
-                              bottom: 6,
-                              right: 6,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Icon(
-                                  Icons.edit,
-                                  size: 26,
-                                  color: Colors.black,
+                            );
+                          },
+                          child: Stack(
+                            children: [
+                              circleAvatar,
+                              Positioned(
+                                bottom: 6,
+                                right: 6,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Icon(
+                                    Icons.edit,
+                                    size: 26,
+                                    color: Colors.black,
+                                  ),
                                 ),
                               ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: OnBoardingFormField(tec: tecNombreUsuario, label: 'Nombre de usuario', isPassword: false, mensajeError: "Introduzca su nombre de usuario"),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: OnBoardingFormField(tec: tecNombre, label: 'Nombre', isPassword: false, mensajeError: "Introduzca su nombre real",),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: OnBoardingFormField(tec: tecApellidos, label: 'Apellidos', isPassword: false, mensajeError: "Introduzca sus apellidos"),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: InkWell(
+                            onTap: _seleccionarFecha,
+                            child: InputDecorator(
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Fecha de nacimiento',
+                                icon: Icon(Icons.calendar_today_rounded),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '${_fechaSeleccionada.day}/${_fechaSeleccionada.month}/${_fechaSeleccionada.year}',
+                                    style: const TextStyle(fontSize: 16.0),
+                                  ),
+                                  const Icon(Icons.arrow_drop_down),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              child: RoundedGreenButton(function: _guardarPerfil, text: 'Guardar Cambios',),
                             ),
                           ],
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: OnBoardingFormField(tec: tecNombreUsuario, label: 'Nombre de usuario', isPassword: false,),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: OnBoardingFormField(tec: tecNombre, label: 'Nombre', isPassword: false,),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: OnBoardingFormField(tec: tecApellidos, label: 'Apellidos', isPassword: false,),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: InkWell(
-                          onTap: _seleccionarFecha,
-                          child: InputDecorator(
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Fecha de nacimiento',
-                              icon: Icon(Icons.calendar_today_rounded),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  '${_fechaSeleccionada.day}/${_fechaSeleccionada.month}/${_fechaSeleccionada.year}',
-                                  style: const TextStyle(fontSize: 16.0),
-                                ),
-                                const Icon(Icons.arrow_drop_down),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: RoundedGreenButton(function: _guardarPerfil, text: 'Guardar Cambios',),
-                          ),
-                        ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -266,41 +271,44 @@ class _PerfilViewState extends State<PerfilView> {
   }
 
   Future<void> _guardarPerfil() async {
-    String nombreUsuario = tecNombreUsuario.text.trim();
-    String nombre = tecNombre.text.trim();
-    String apellidos = tecApellidos.text.trim();
-    if (nombreUsuario.isNotEmpty && nombre.isNotEmpty && apellidos.isNotEmpty) {
-      print('Nombre de usuario: $nombreUsuario');
-      print('Fecha de nacimiento: $_fechaSeleccionada');
-      usuarioActual.updateDisplayName(nombreUsuario);
-      if (_imagePreview != null) {
-        subeFotoPerfil();
+    if (_formKey.currentState!.validate()) {
+      String nombreUsuario = tecNombreUsuario.text.trim();
+      String nombre = tecNombre.text.trim();
+      String apellidos = tecApellidos.text.trim();
+      if (nombreUsuario.isNotEmpty &&
+          nombre.isNotEmpty &&
+          apellidos.isNotEmpty) {
+        print('Nombre de usuario: $nombreUsuario');
+        print('Fecha de nacimiento: $_fechaSeleccionada');
+        usuarioActual.updateDisplayName(nombreUsuario);
+
+        if (_imagePreview != null) {
+          subeFotoPerfil();
+        }
+
+        FProfile perfil = FProfile(
+          nombre: nombre,
+          apellidos: apellidos,
+          fechaNacimiento: _fechaSeleccionada,
+          geoloc: const GeoPoint(0, 0),
+        );
+
+        await fbAdmin.creaPerfilUsuario(perfil);
+        await DataHolder().getProfile();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Perfil guardado exitosamente"),
+          ),
+        );
+        Navigator.of(context).popAndPushNamed("/home_view");
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Por favor, rellenetodos los campos"),
+          ),
+        );
       }
-
-      Position posicion = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      double latitud = posicion.latitude;
-      double longitud = posicion.longitude;
-
-      GeoPoint geoPoint = GeoPoint(latitud, longitud);
-
-      FProfile perfil = FProfile(nombre: nombre, apellidos: apellidos, fechaNacimiento: _fechaSeleccionada, geoloc: geoPoint);
-      await fbAdmin.creaPerfilUsuario(perfil);
-      DataHolder().getProfile();
-      Navigator.of(context).popAndPushNamed("/home_view");
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Error'),
-          content: const Text('Por favor rellene todos los campos.'),
-          actions: [
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
     }
   }
 

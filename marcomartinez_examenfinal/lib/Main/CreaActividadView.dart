@@ -22,6 +22,8 @@ class CreaActividadView extends StatefulWidget {
 class _CreaActividadViewState extends State<CreaActividadView> {
   FirebaseAdmin fbAdmin = FirebaseAdmin();
 
+  late GlobalKey<FormState> _formKey;
+
   TextEditingController tecNombre = TextEditingController();
   TextEditingController tecDescripcion = TextEditingController();
   TextEditingController tecPrecio = TextEditingController();
@@ -29,6 +31,12 @@ class _CreaActividadViewState extends State<CreaActividadView> {
   final ImagePicker _picker = ImagePicker();
   File? _imagePreview;
   LatLng? _ubicacionSeleccionada = null;
+
+  @override
+  void initState() {
+    super.initState();
+    _formKey = GlobalKey<FormState>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,153 +69,159 @@ class _CreaActividadViewState extends State<CreaActividadView> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('AVATAR DE USUARIO'),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if(!PlatformAdmin.isWebPlatform())
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('AVATAR DE USUARIO'),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if(!PlatformAdmin.isWebPlatform())
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          onPressedCamera();
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text("Tomar foto"),
+                                      ),
+                                    const SizedBox(height: 12),
                                     ElevatedButton(
                                       onPressed: () {
-                                        onPressedCamera();
+                                        onPressedGallery();
                                         Navigator.pop(context);
                                       },
-                                      child: const Text("Tomar foto"),
+                                      child: const Text("Seleccionar de la galería"),
                                     ),
-                                  const SizedBox(height: 12),
+                                  ],
+                                ),
+                                actions: [
                                   ElevatedButton(
                                     onPressed: () {
-                                      onPressedGallery();
+                                      setState(() {
+                                        _imagePreview = null;
+                                      });
                                       Navigator.pop(context);
                                     },
-                                    child: const Text("Seleccionar de la galería"),
+                                    child: const Text("Eliminar"),
                                   ),
                                 ],
                               ),
-                              actions: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _imagePreview = null;
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text("Eliminar"),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        child: Stack(
-                          children: [
-                            Container(
-                              width: 140,
-                              height: 140,
-                              decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius: BorderRadius.circular(20),
-                                image: _imagePreview != null ? DecorationImage(image: FileImage(_imagePreview!), fit: BoxFit.cover) : null,
-                              ),
-                              child: _imagePreview == null ? const Icon(Icons.image, size: 70, color: Colors.white) : null,
-                            ),
-
-                            Positioned(
-                              bottom: 6,
-                              right: 6,
-                              child: Container(
+                            );
+                          },
+                          child: Stack(
+                            children: [
+                              Container(
+                                width: 140,
+                                height: 140,
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(20),
+                                  image: _imagePreview != null ? DecorationImage(image: FileImage(_imagePreview!), fit: BoxFit.cover) : null,
                                 ),
-                                child: const Icon(
-                                  Icons.edit,
-                                  size: 26,
-                                  color: Colors.black,
+                                child: _imagePreview == null ? const Icon(Icons.image, size: 70, color: Colors.white) : null,
+                              ),
+
+                              Positioned(
+                                bottom: 6,
+                                right: 6,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Icon(
+                                    Icons.edit,
+                                    size: 26,
+                                    color: Colors.black,
+                                  ),
                                 ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: OnBoardingFormField(
+                            tec: tecNombre,
+                            label: "Nombre de la actividad",
+                            isPassword: false,
+                            mensajeError: "Introduzca el nombre de la actividad",
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: OnBoardingFormField(
+                            tec: tecDescripcion,
+                            label: "Descripción",
+                            isPassword: false,
+                            mensajeError: "Introduzca la descipción de la actividad",
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: OnBoardingFormField(
+                            tec: tecPrecio,
+                            label: "Precio",
+                            isPassword: false,
+                            mensajeError: "Introduzca el precio (número) de la actividad",
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: InkWell(
+                            onTap: _seleccionarFecha,
+                            child: InputDecorator(
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Fecha',
+                                icon: Icon(Icons.calendar_today_rounded),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '${_fechaSeleccionada.day}/${_fechaSeleccionada.month}/${_fechaSeleccionada.year}',
+                                    style: const TextStyle(fontSize: 16.0),
+                                  ),
+                                  const Icon(Icons.arrow_drop_down),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                              _ubicacionSeleccionada = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SeleccionarUbicacionView(),
+                              ),
+                            );
+                          },
+                          child: const Text('Seleccionar Ubicación en el Mapa'),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              child: RoundedGreenButton(
+                                function: _guardarActividad,
+                                text: 'Guardar Actividad',
                               ),
                             ),
                           ],
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: OnBoardingFormField(
-                          tec: tecNombre,
-                          label: "Nombre de la actividad",
-                          isPassword: false,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: OnBoardingFormField(
-                          tec: tecDescripcion,
-                          label: "Descripción",
-                          isPassword: false,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: OnBoardingFormField(
-                          tec: tecPrecio,
-                          label: "Precio",
-                          isPassword: false,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: InkWell(
-                          onTap: _seleccionarFecha,
-                          child: InputDecorator(
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Fecha',
-                              icon: Icon(Icons.calendar_today_rounded),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  '${_fechaSeleccionada.day}/${_fechaSeleccionada.month}/${_fechaSeleccionada.year}',
-                                  style: const TextStyle(fontSize: 16.0),
-                                ),
-                                const Icon(Icons.arrow_drop_down),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () async {
-                            _ubicacionSeleccionada = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SeleccionarUbicacionView(),
-                            ),
-                          );
-                        },
-                        child: const Text('Seleccionar Ubicación en el Mapa'),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: RoundedGreenButton(
-                              function: _guardarActividad,
-                              text: 'Guardar Actividad',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -233,48 +247,73 @@ class _CreaActividadViewState extends State<CreaActividadView> {
   }
 
   Future<void> _guardarActividad() async {
-    String nombre = tecNombre.text.trim();
-    String descripcion = tecDescripcion.text.trim();
-    String precioText = tecPrecio.text.trim();
+    if (_formKey.currentState!.validate()) {
+      String nombre = tecNombre.text.trim();
+      String descripcion = tecDescripcion.text.trim();
+      String precioText = tecPrecio.text.trim();
 
-    if (nombre.isNotEmpty && descripcion.isNotEmpty && precioText.isNotEmpty) {
-      double precio = double.tryParse(precioText) ?? 0.0;
+      if (nombre.isNotEmpty && descripcion.isNotEmpty &&
+          precioText.isNotEmpty) {
+        if (double.tryParse(precioText) == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('El precio debe ser un número válido'),
+            ),
+          );
+          return;
+        }
 
-      String rutaNube = "Actividades/${fbAdmin.auth.currentUser?.uid}/${DateTime.now().millisecondsSinceEpoch}/image.jpg";
-      String rutaDescarga = "";
-      if (_imagePreview != null ) {
-        rutaDescarga = await fbAdmin.uploadImageToStorage(rutaNube, _imagePreview!);
-      }
+        double precio = double.parse(precioText);
 
-      FActividad fActividad;
+        String rutaNube = "Actividades/${fbAdmin.auth.currentUser
+            ?.uid}/${DateTime
+            .now()
+            .millisecondsSinceEpoch}/image.jpg";
+        String rutaDescarga = "";
+        if (_imagePreview != null) {
+          rutaDescarga =
+          await fbAdmin.uploadImageToStorage(rutaNube, _imagePreview!);
+        }
 
-      final _ubicacionSeleccionada = this._ubicacionSeleccionada;
-      if (_ubicacionSeleccionada != null) {
-        double latitud = _ubicacionSeleccionada.latitude;
-        double longitud = _ubicacionSeleccionada.longitude;
+        FActividad fActividad;
 
-        fActividad = FActividad(
-          nombre: nombre,
-          descripcion: descripcion,
-          precio: precio,
-          fecha: _fechaSeleccionada,
-          imagenUrl: rutaDescarga,
-          geoloc: GeoPoint(latitud, longitud),
+        final _ubicacionSeleccionada = this._ubicacionSeleccionada;
+        if (_ubicacionSeleccionada != null) {
+          double latitud = _ubicacionSeleccionada.latitude;
+          double longitud = _ubicacionSeleccionada.longitude;
+
+          fActividad = FActividad(
+            nombre: nombre,
+            descripcion: descripcion,
+            precio: precio,
+            fecha: _fechaSeleccionada,
+            imagenUrl: rutaDescarga,
+            geoloc: GeoPoint(latitud, longitud),
+          );
+        } else {
+          fActividad = FActividad(
+            nombre: nombre,
+            descripcion: descripcion,
+            precio: precio,
+            fecha: _fechaSeleccionada,
+            imagenUrl: rutaDescarga,
+          );
+        }
+
+        await fbAdmin.subirActividad(fActividad);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Actividad creada exitosamente'),
+          ),
         );
+        Navigator.pop(context);
       } else {
-        fActividad = FActividad(
-          nombre: nombre,
-          descripcion: descripcion,
-          precio: precio,
-          fecha: _fechaSeleccionada,
-          imagenUrl: rutaDescarga,
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Por favor, rellena todos los campos'),
+          ),
         );
       }
-
-      await fbAdmin.subirActividad(fActividad);
-      Navigator.pop(context);
-    } else {
-      print('Por favor rellena todos los campos');
     }
   }
 

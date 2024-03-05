@@ -46,7 +46,7 @@ class FirebaseAdmin {
       } else {
         // Mostrar mensaje de error utilizando Snackbar
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text("El email debe contener el caracter \"@\""),
           ),
         );
@@ -55,7 +55,7 @@ class FirebaseAdmin {
     } else {
       // Mostrar mensaje de error utilizando Snackbar
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text("Email y contraseña tienen que tener contenido"),
         ),
       );
@@ -126,8 +126,13 @@ class FirebaseAdmin {
     }
   }
 
-  Future<void> signOutUsuario() async {
+  Future<void> signOutUsuario(BuildContext context) async {
     await auth.signOut();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Ha cerrado sesión exitosamente"),
+      ),
+    );
   }
 
   Future<void> creaPerfilUsuario(FProfile profile) async {
