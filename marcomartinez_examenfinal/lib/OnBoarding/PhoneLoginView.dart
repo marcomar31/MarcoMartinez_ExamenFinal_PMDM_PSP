@@ -52,6 +52,11 @@ class _PhoneLoginViewState extends State<PhoneLoginView> {
           verificationId: sVerificationCode, smsCode: smsCode);
 
       if (await fbAdmin.signInWithPhoneNumber(credential)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Ha iniciado sesión exitosamente"),
+          ),
+        );
         if (await fbAdmin.descargarPerfil() != null) {
           Navigator.of(context).popAndPushNamed("/home_view");
         } else {

@@ -225,35 +225,38 @@ class _CreaPerfilViewState extends State<CreaPerfilView> {
       String nombreUsuario = tecNombreUsuario.text.trim();
       String nombre = tecNombre.text.trim();
       String apellidos = tecApellidos.text.trim();
-      if (nombreUsuario.isNotEmpty && nombre.isNotEmpty &&
+      if (nombreUsuario.isNotEmpty &&
+          nombre.isNotEmpty &&
           apellidos.isNotEmpty) {
         print('Nombre de usuario: $nombreUsuario');
         print('Fecha de nacimiento: $_fechaSeleccionada');
         usuarioActual.updateDisplayName(nombreUsuario);
+
         if (_imagePreview != null) {
           subeFotoPerfil();
         }
-        FProfile perfil = FProfile(nombre: nombre,
-            apellidos: apellidos,
-            fechaNacimiento: _fechaSeleccionada,
-            geoloc: const GeoPoint(0, 0));
+
+        FProfile perfil = FProfile(
+          nombre: nombre,
+          apellidos: apellidos,
+          fechaNacimiento: _fechaSeleccionada,
+          geoloc: const GeoPoint(0, 0),
+        );
+
         await fbAdmin.creaPerfilUsuario(perfil);
         await DataHolder().getProfile();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Perfil creado exitosamente"),
+          ),
+        );
         Navigator.of(context).popAndPushNamed("/home_view");
       } else {
-        showDialog(
-          context: context,
-          builder: (context) =>
-              AlertDialog(
-                title: const Text('Error'),
-                content: const Text('Por favor rellene todos los campos.'),
-                actions: [
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('OK'),
-                  ),
-                ],
-              ),
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Por favor, rellenetodos los campos"),
+          ),
         );
       }
     }

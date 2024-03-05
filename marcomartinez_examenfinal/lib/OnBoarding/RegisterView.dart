@@ -88,7 +88,7 @@ class _RegisterViewState extends State<RegisterView> {
   Future<void> _creaUsuario() async {
     if (_formKey.currentState!.validate()) {
       await fbAdmin.createUser(
-          tecEmail.text, tecPassword.text, tecRePassword.text);
+          tecEmail.text, tecPassword.text, tecRePassword.text, _context);
     }
   }
 }

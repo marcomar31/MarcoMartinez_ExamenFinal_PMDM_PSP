@@ -53,24 +53,7 @@ class MapaViewState extends State<MapaView> {
       userRef.snapshots().listen((DocumentSnapshot<FProfile> snapshot) {
         if (snapshot.exists) {
           FProfile user = snapshot.data()!;
-
-          Marker marker = Marker(
-            markerId: MarkerId(userId),
-            position: LatLng(user.geoloc.latitude, user.geoloc.longitude),
-            infoWindow: InfoWindow(
-              title: fbAdmin.auth.currentUser?.displayName ?? "NOMBRE DE USUARIO",
-              snippet: fbAdmin.auth.currentUser?.email ?? fbAdmin.auth.currentUser?.phoneNumber,
-            ),
-            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-          );
-
-          if (mounted) {
-            setState(() {
-              marcadores.clear();
-              marcadores.add(marker);
-              print("Marcador de usuario agregado: $marker");
-            });
-          }
+          actualizarMarcadorUsuario(user);
         }
       }, onError: (error) {
         print("Error al descargar el perfil del usuario actual: $error");
@@ -80,38 +63,55 @@ class MapaViewState extends State<MapaView> {
     CollectionReference<FActividad> actividadesRef = fbAdmin.db.collection("Actividades")
         .withConverter(fromFirestore: FActividad.fromFirestore, toFirestore: (FActividad actividad, _) => actividad.toFirestore());
 
-    actividadesRef.snapshots().listen((QuerySnapshot<FActividad> snapshot) {
-      Marker marker;
-      if (snapshot.docs.isNotEmpty) {
-        List<Marker> nuevosMarcadores = [];
-        for (var doc in snapshot.docs) {
-          FActividad actividad = doc.data();
-          if (actividad.geoloc != null) {
-            marker = Marker(
-              markerId: MarkerId(doc.id),
-              position: LatLng(actividad.geoloc!.latitude, actividad.geoloc!.longitude),
-              infoWindow: InfoWindow(
-                title: actividad.nombre,
-                snippet: "${actividad.precio} €",
-              ),
-              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-            );
-            nuevosMarcadores.add(marker);
-          }
+    actividadesRef.snapshots().listen((QuerySnapshot<FActividad> snapshot) async {
+      List<Marker> nuevosMarcadores = [];
+      for (var doc in snapshot.docs) {
+        FActividad actividad = await doc.data();
+        if (actividad.geoloc != null) {
+          Marker marker = Marker(
+            markerId: MarkerId(doc.id),
+            position: LatLng(actividad.geoloc!.latitude, actividad.geoloc!.longitude),
+            infoWindow: InfoWindow(
+              title: actividad.nombre,
+              snippet: "${actividad.precio} €",
+            ),
+            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+          );
+          nuevosMarcadores.add(marker);
         }
-
-        setState(() {
-          if (nuevosMarcadores.isNotEmpty) {
-            marcadores.addAll(nuevosMarcadores);
-          }
-          print("Marcadores de actividades agregados: $nuevosMarcadores");
-        });
       }
+
+      setState(() {
+        marcadores.clear();
+        marcadores.addAll(nuevosMarcadores);
+        print("Marcadores de actividades agregados: $nuevosMarcadores");
+      });
     }, onError: (error) {
       print("Error al descargar las actividades: $error");
     });
   }
 
+  void actualizarMarcadorUsuario(FProfile user) {
+    String? userId = fbAdmin.auth.currentUser?.uid;
+    if (userId != null && mounted) {
+      Marker marker = Marker(
+        markerId: MarkerId(userId),
+        position: LatLng(user.geoloc.latitude, user.geoloc.longitude),
+        infoWindow: InfoWindow(
+          title: fbAdmin.auth.currentUser?.displayName ?? "NOMBRE DE USUARIO",
+          snippet: fbAdmin.auth.currentUser?.email ?? fbAdmin.auth.currentUser?.phoneNumber,
+        ),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+      );
+
+      setState(() {
+        marcadores.add(marker);
+        print("Marcador de usuario agregado: $marker");
+      });
+    } else {
+      print("Error: No se pudo obtener el ID de usuario o el widget no está montado");
+    }
+  }
 
   void descargaUsuariosError(error){
     print("Listen failed: $error");

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:marcomartinez_examenfinal/FirestoreObjects/FActividad.dart';
 import 'package:marcomartinez_examenfinal/FirestoreObjects/FProfile.dart';
 
@@ -13,33 +14,56 @@ class FirebaseAdmin {
   FirebaseFirestore db = FirebaseFirestore.instance;
   FirebaseStorage fbStorage = FirebaseStorage.instance;
 
-  Future<bool> createUser(String email, String password, String rePassword) async {
+  Future<bool> createUser(String email, String password, String rePassword, BuildContext context) async {
     if (email.isNotEmpty && password.isNotEmpty && rePassword.isNotEmpty) {
       if (email.contains("@")) {
         if (password == rePassword) {
           try {
-            await auth.createUserWithEmailAndPassword(email: email, password: password);
-            print("Creado");
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+            DataHolder().usuarioActual = FirebaseAuth.instance.currentUser;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Usuario registrado exitosamente"),
+              ),
+            );
             return true;
           } catch (e) {
-            print(e);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Error al crear el usuario, el email ya está en uso"),
+              ),
+            );
             return false;
           }
         } else {
-          print("No creado");
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Las contraseñas no coinciden"),
+            ),
+          );
           return false;
         }
       } else {
-        print("El email debe contener el caracter \"@\"");
+        // Mostrar mensaje de error utilizando Snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("El email debe contener el caracter \"@\""),
+          ),
+        );
         return false;
       }
     } else {
-      print("Email y contraseña tienen que tener contenido");
+      // Mostrar mensaje de error utilizando Snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Email y contraseña tienen que tener contenido"),
+        ),
+      );
       return false;
     }
   }
 
-  Future<bool> logInWithEmail(String email, String password) async  {
+  Future<bool> logInWithEmail(String email, String password, BuildContext context) async  {
     if (email.isNotEmpty && password.isNotEmpty) {
       if (email.contains("@")) {
         try {
@@ -47,21 +71,39 @@ class FirebaseAdmin {
               email: email,
               password: password
           );
-          DataHolder().usuarioActual = auth.currentUser;
+          DataHolder().usuarioActual = FirebaseAuth.instance.currentUser;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Ha iniciado sesión exitosamente"),
+            ),
+          );
           return true;
         } catch (e) {
-          print("Error al iniciar sesión");
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Error al iniciar sesión, compruebe que sus credenciales son correctas"),
+            ),
+          );
           return false;
         }
       } else {
-        print("El email debe contener el caracter \"@\"");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("El email debe contener el caracter \"@\""),
+          ),
+        );
         return false;
       }
     } else {
-      print("Email y contraseña tienen que tener contenido");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Email y contraseña tienen que tener contenido"),
+        ),
+      );
       return false;
     }
   }
+
 
   Future<void> verificarTelefono(String numTelefono, void Function(PhoneAuthCredential) whenCompleted, void Function(FirebaseAuthException) whenFailed, void Function(String verificationId, int? forceResendingToken) codeSent, void Function(String verificacionId) codeAutoRetrievalTimeout) async {
     await auth.verifyPhoneNumber(
@@ -92,9 +134,10 @@ class FirebaseAdmin {
     await db.collection("Perfiles").doc(auth.currentUser?.uid).set(profile.toFirestore());
   }
 
-  void actualizarPerfilUsuario(FProfile perfil) async{
-    await db.collection("Perfiles").doc(auth.currentUser?.uid).update(perfil.toFirestore());
+  void actualizarPerfilUsuario(FProfile perfil) async {
+        await db.collection("Perfiles").doc(auth.currentUser?.uid).update(perfil.toFirestore());
   }
+
 
   Future<FProfile?> descargarPerfil() async {
     if (auth.currentUser != null) {

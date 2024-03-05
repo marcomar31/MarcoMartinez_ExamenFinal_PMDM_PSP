@@ -129,7 +129,7 @@ class _LoginViewState extends State<LoginView> {
 
   Future<void> _iniciarSesion() async {
     if (_formKey.currentState!.validate()) {
-      if (await fbAdmin.logInWithEmail(tecEmail.text, tecPassword.text)) {
+      if (await fbAdmin.logInWithEmail(tecEmail.text, tecPassword.text, _context)) {
         if (await fbAdmin.descargarPerfil() != null) {
           Navigator.of(_context).popAndPushNamed("/home_view");
         } else {
