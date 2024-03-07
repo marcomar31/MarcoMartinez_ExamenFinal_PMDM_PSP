@@ -8,13 +8,22 @@ class OnBoarding extends StatefulWidget {
   const OnBoarding({super.key});
 
   @override
-  State<StatefulWidget> createState() => _OnBoardingState();
+  State<StatefulWidget> createState() => OnBoardingState();
 }
 
-class _OnBoardingState extends State<OnBoarding> {
+class OnBoardingState extends State<OnBoarding> {
+  late OnBoardingState onBoardingState;
+
   var selectedIndex = 0;
   bool isBtnLoginPulsado = true;
   bool isBtnRegisterPulsado = false;
+
+  @override
+  void initState() {
+    super.initState();
+    onBoardingState = this;
+    updateSelectedIndex(0, true, false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +32,7 @@ class _OnBoardingState extends State<OnBoarding> {
     OnBoardingTopMenuButton btnLogin = OnBoardingTopMenuButton(
       text: 'LOGIN',
       function: () {
-        setState(() {
-          selectedIndex = 0;
-          isBtnLoginPulsado = true;
-          isBtnRegisterPulsado = false;
-        });
+        updateSelectedIndex(0, true, false);
       },
       isPulsado: isBtnLoginPulsado,
     );
@@ -35,11 +40,7 @@ class _OnBoardingState extends State<OnBoarding> {
     OnBoardingTopMenuButton btnRegister = OnBoardingTopMenuButton(
       text: 'REGISTER',
       function: () {
-        setState(() {
-          selectedIndex = 1;
-          isBtnLoginPulsado = false;
-          isBtnRegisterPulsado = true;
-        });
+        updateSelectedIndex(1, false, true);
       },
       isPulsado: isBtnRegisterPulsado,
     );
@@ -83,6 +84,14 @@ class _OnBoardingState extends State<OnBoarding> {
           ],
         ),
       );
+    });
+  }
+
+  void updateSelectedIndex(int index, bool isLoginSelected, bool isRegisterSelected) {
+    setState(() {
+      selectedIndex = index;
+      isBtnLoginPulsado = isLoginSelected;
+      isBtnRegisterPulsado = isRegisterSelected;
     });
   }
 }

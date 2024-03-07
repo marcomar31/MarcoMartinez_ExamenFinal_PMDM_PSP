@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:marcomartinez_examenfinal/CustomizedObjects/TextFormFields.dart';
+import 'package:marcomartinez_examenfinal/OnBoarding/OnBoarding.dart';
 import 'package:marcomartinez_examenfinal/Singleton/FirebaseAdmin.dart';
 
 import '../CustomizedObjects/Buttons.dart';
@@ -22,6 +23,8 @@ class _RegisterViewState extends State<RegisterView> {
   TextEditingController tecPassword = TextEditingController();
   TextEditingController tecRePassword = TextEditingController();
 
+  late bool _usuarioRegistrado;
+
   @override
   void initState() {
     super.initState();
@@ -32,6 +35,7 @@ class _RegisterViewState extends State<RegisterView> {
   Widget build(BuildContext context) {
     _context = context;
     double screenWidth = PlatformAdmin.getScreenWidth(context);
+    _usuarioRegistrado = false;
 
     Column column = Column(
       children: [
@@ -87,8 +91,15 @@ class _RegisterViewState extends State<RegisterView> {
 
   Future<void> _creaUsuario() async {
     if (_formKey.currentState!.validate()) {
-      await fbAdmin.createUser(
+      _usuarioRegistrado = await fbAdmin.createUser(
           tecEmail.text, tecPassword.text, tecRePassword.text, _context);
+    }
+
+    if (_usuarioRegistrado) {
+      OnBoardingState? onBoardingState = context.findAncestorStateOfType<OnBoardingState>();
+      if (onBoardingState != null) {
+        onBoardingState.updateSelectedIndex(0, true, false);
+      }
     }
   }
 }
