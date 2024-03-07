@@ -63,15 +63,23 @@ class _MainDrawerState extends State<MainDrawer> {
                       fontWeight: FontWeight.bold
                   ),
                 ),
-                if (usuarioActual.email != null)
-                  Text(
-                    usuarioActual.email ?? '',
+                (usuarioActual.email != null)
+                  ? Text(
+                    usuarioActual.email!,
                     style: const TextStyle(
                       color: Colors.grey,
                       fontSize: 14,
                     ),
-                  ),
-
+                  )
+                  : (usuarioActual.phoneNumber != null)
+                    ? Text(
+                      usuarioActual.phoneNumber!,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
+                      ),
+                    )
+                    : const Text(""),
               ],
             ),
           ),
