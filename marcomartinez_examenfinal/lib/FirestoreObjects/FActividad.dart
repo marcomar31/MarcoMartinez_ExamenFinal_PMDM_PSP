@@ -1,14 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FActividad {
+  final String id;
   final String nombre;
   final String descripcion;
   final DateTime fecha;
   final double precio;
   final String imagenUrl;
-  GeoPoint? geoloc;
+  final GeoPoint? geoloc;
 
   FActividad({
+    required this.id,
     required this.nombre,
     required this.descripcion,
     required this.fecha,
@@ -26,6 +28,7 @@ class FActividad {
     final geoPoint = geoloc is GeoPoint ? geoloc : null;
 
     return FActividad(
+      id: snapshot.id,
       nombre: data?['nombre'] ?? "",
       descripcion: data?['descripcion'] ?? "",
       fecha: fecha,
@@ -41,7 +44,7 @@ class FActividad {
       "descripcion": descripcion,
       "fecha": fecha,
       "precio": precio,
-      "imagenUrl": imagenUrl, 
+      "imagenUrl": imagenUrl,
       "geoloc": geoloc,
     };
   }

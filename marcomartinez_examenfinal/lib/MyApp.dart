@@ -7,6 +7,7 @@ import 'package:marcomartinez_examenfinal/OnBoarding/CreaPerfilView.dart';
 import 'package:marcomartinez_examenfinal/OnBoarding/OnBoarding.dart';
 
 import 'Main/ConfiguracionView.dart';
+import 'Main/EditaActividadView.dart';
 import 'Main/HomeView.dart';
 import 'Main/PerfilView.dart';
 import 'OnBoarding/LoginView.dart';
@@ -22,14 +23,15 @@ class MyApp extends StatelessWidget {
     if(PlatformAdmin.isAndroidPlatform() || PlatformAdmin.isIOSPlatform()) {
       materialApp = MaterialApp(title: "Examen Marco 2Ev (Móvil)",
         routes: {
-          '/onboarding_view': (context) => OnBoarding(),
+          '/onboarding_view': (context) => const OnBoarding(),
           '/login_view': (context) => const LoginView(),
-          '/register_view': (context) => RegisterView(),
+          '/register_view': (context) => const RegisterView(),
           '/creaperfil_view': (context) => const CreaPerfilView(),
           '/home_view': (context) => const HomeView(),
-          '/boredapi_view': (context) => BoredApiView(),
+          '/boredapi_view': (context) => const BoredApiView(),
           '/configuracion_view': (context) => const ConfiguracionView(),
           '/creaactividad_view': (context) => const CreaActividadView(),
+          '/editaactividad_view': (context) => const EditaActividadView(),
           '/perfil_view': (context) => const PerfilView(),
           '/actividad_view': (context) => const ActividadView(),
           '/mapa_view': (context) => const MapaView(),
@@ -40,12 +42,12 @@ class MyApp extends StatelessWidget {
     } else if (PlatformAdmin.isWebPlatform()) {
       materialApp = MaterialApp(title: "Examen Marco 2Ev (Web)",
         routes: {
-          '/onboarding_view': (context) => OnBoarding(),
+          '/onboarding_view': (context) => const OnBoarding(),
           '/login_view': (context) => const LoginView(),
-          '/register_view': (context) => RegisterView(),
+          '/register_view': (context) => const RegisterView(),
           '/creaperfil_view': (context) => const CreaPerfilView(),
           '/home_view': (context) => const HomeView(),
-          '/boredapi_view': (context) => BoredApiView(),
+          '/boredapi_view': (context) => const BoredApiView(),
           '/configuracion_view': (context) => const ConfiguracionView(),
           '/creaactividad_view': (context) => const CreaActividadView(),
           '/perfil_view': (context) => const PerfilView(),

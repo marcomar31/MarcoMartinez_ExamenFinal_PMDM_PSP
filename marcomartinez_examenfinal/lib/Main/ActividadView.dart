@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:marcomartinez_examenfinal/FirestoreObjects/FActividad.dart';
 import 'package:marcomartinez_examenfinal/Singleton/DataHolder.dart';
@@ -12,6 +13,7 @@ class ActividadView extends StatefulWidget {
 
 class _ActividadViewState extends State<ActividadView> {
   FActividad? actividad = DataHolder().selectedActivity;
+  bool _actividadEditada = false;
 
   @override
   Widget build(BuildContext context) {
@@ -127,6 +129,19 @@ class _ActividadViewState extends State<ActividadView> {
                     fontSize: 16,
                     color: Colors.white,
                   ),
+                ),
+                FloatingActionButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed("/editaactividad_view").then((result) {
+                      if (result != null && result is bool) {
+                        setState(() {
+                          _actividadEditada = result;
+                        });
+                      }
+                      Navigator.of(context).pop(_actividadEditada);
+                    });
+                  },
+                  child: const Icon(Icons.edit_rounded),
                 ),
                 const SizedBox(height: 30,),
               ],

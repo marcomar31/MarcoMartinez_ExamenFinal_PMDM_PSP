@@ -139,10 +139,9 @@ class FirebaseAdmin {
     await db.collection("Perfiles").doc(auth.currentUser?.uid).set(profile.toFirestore());
   }
 
-  void actualizarPerfilUsuario(FProfile perfil) async {
+  Future<void> actualizarPerfilUsuario(FProfile perfil) async {
         await db.collection("Perfiles").doc(auth.currentUser?.uid).update(perfil.toFirestore());
   }
-
 
   Future<FProfile?> descargarPerfil() async {
     if (auth.currentUser != null) {
@@ -202,5 +201,19 @@ class FirebaseAdmin {
     );
 
     postsRef.add(actividadNueva);
+  }
+
+  Future<void> subirActividadCustomId(FActividad actividadNueva) async {
+    CollectionReference<Map<String, dynamic>> postsRef = db.collection("Actividades");
+
+    await postsRef.doc(actividadNueva.id).set(
+      actividadNueva.toFirestore(),
+      SetOptions(merge: true),
+    );
+  }
+
+  Future<void> actualizarActividad(FActividad actividad) async {
+    String? selectedActivity = DataHolder().selectedActivity?.id ?? "";
+    await db.collection("Actividades").doc(selectedActivity).update(actividad.toFirestore());
   }
 }

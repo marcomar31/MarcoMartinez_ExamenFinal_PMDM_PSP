@@ -1,106 +1,64 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:marcomartinez_examenfinal/CustomizedObjects/TextFormFields.dart';
-import 'package:marcomartinez_examenfinal/FirestoreObjects/FProfile.dart';
-import 'package:marcomartinez_examenfinal/Singleton/FirebaseAdmin.dart';
+import 'package:marcomartinez_examenfinal/CustomizedObjects/Buttons.dart';
+import 'package:marcomartinez_examenfinal/FirestoreObjects/FActividad.dart';
+import 'package:marcomartinez_examenfinal/Singleton/DataHolder.dart';
 
-import '../CustomizedObjects/Buttons.dart';
-import '../Singleton/DataHolder.dart';
+import '../CustomizedObjects/TextFormFields.dart';
+import '../Singleton/FirebaseAdmin.dart';
 import '../Singleton/PlatformAdmin.dart';
+import 'SeleccionarUbicacionView.dart';
 
-class PerfilView extends StatefulWidget {
-  const PerfilView({super.key});
+class EditaActividadView extends StatefulWidget {
+  const EditaActividadView({super.key});
 
   @override
-  State<StatefulWidget> createState() => _PerfilViewState();
+  _EditaActividadViewState createState() => _EditaActividadViewState();
 }
 
-class _PerfilViewState extends State<PerfilView> {
+class _EditaActividadViewState extends State<EditaActividadView> {
   FirebaseAdmin fbAdmin = FirebaseAdmin();
-  late User usuarioActual;
-  late FProfile perfilUsuario;
 
   late GlobalKey<FormState> _formKey;
+  bool _actividadEditada = false;
 
-  TextEditingController tecNombreUsuario = TextEditingController();
   TextEditingController tecNombre = TextEditingController();
-  TextEditingController tecApellidos = TextEditingController();
+  TextEditingController tecDescripcion = TextEditingController();
+  TextEditingController tecPrecio = TextEditingController();
   DateTime _fechaSeleccionada = DateTime.now();
   final ImagePicker _picker = ImagePicker();
   File? _imagePreview;
-  late String imgUrl = "";
-  late CircleAvatar circleAvatar;
+  LatLng? _ubicacionSeleccionada;
 
   @override
   void initState() {
     super.initState();
     _formKey = GlobalKey<FormState>();
-    usuarioActual = fbAdmin.auth.currentUser!;
-    perfilUsuario = DataHolder().perfil!;
-    tecNombreUsuario.text = usuarioActual.displayName ?? "";
-    tecNombre.text = perfilUsuario.nombre;
-    tecApellidos.text = perfilUsuario.apellidos;
-    getProfileImage();
-  }
-
-  Future<void> getProfileImage() async {
-    try {
-      imgUrl = await fbAdmin.downloadUserProfileImage();
-      setState(() {
-        if (imgUrl.isNotEmpty) {
-          circleAvatar = CircleAvatar(
-            radius: 70,
-            backgroundColor: Colors.grey,
-            backgroundImage: NetworkImage(imgUrl),
-          );
-        }
-      });
-    } catch (error) {
-      print('Error al descargar la imagen del perfil: $error');
+    tecNombre.text = DataHolder().selectedActivity!.nombre;
+    tecDescripcion.text = DataHolder().selectedActivity!.descripcion;
+    tecPrecio.text = DataHolder().selectedActivity!.precio.toString();
+    _fechaSeleccionada = DataHolder().selectedActivity!.fecha;
+    final geoloc = DataHolder().selectedActivity?.geoloc;
+    if (geoloc != null) {
+      double? latitud = geoloc.latitude;
+      double? longitud = geoloc.longitude;
+      _ubicacionSeleccionada = LatLng(latitud, longitud);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = PlatformAdmin.getScreenWidth(context);
 
-    if (imgUrl.isNotEmpty) {
-      if (_imagePreview == null) {
-        circleAvatar = CircleAvatar(
-          radius: 70,
-          backgroundColor: Colors.grey,
-          backgroundImage: NetworkImage(imgUrl),
-        );
-      } else {
-        circleAvatar = CircleAvatar(
-          radius: 70,
-          backgroundColor: Colors.grey,
-          backgroundImage: FileImage(_imagePreview!),
-        );
-      }
-    } else {
-      circleAvatar = const CircleAvatar(
-        radius: 70,
-        backgroundColor: Colors.grey,
-        backgroundImage: null,
-        child: Icon(
-          Icons.person_rounded,
-          size: 70,
-          color: Colors.white,
-        )
-      );
-    }
-
     return Scaffold(
       backgroundColor: const Color.fromRGBO(10, 35, 65, 1.0),
       appBar: AppBar(
         title: const Text(
-          "TU PERFIL",
+          "EDITAR ACTIVIDAD",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -161,16 +119,6 @@ class _PerfilViewState extends State<PerfilView> {
                                     onPressed: () {
                                       setState(() {
                                         _imagePreview = null;
-                                        circleAvatar = const CircleAvatar(
-                                            radius: 70,
-                                            backgroundColor: Colors.grey,
-                                            backgroundImage: null,
-                                            child: Icon(
-                                              Icons.person_rounded,
-                                              size: 70,
-                                              color: Colors.white,
-                                            )
-                                        );
                                       });
                                       Navigator.pop(context);
                                     },
@@ -182,7 +130,17 @@ class _PerfilViewState extends State<PerfilView> {
                           },
                           child: Stack(
                             children: [
-                              circleAvatar,
+                              Container(
+                                width: 140,
+                                height: 140,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(20),
+                                  image: _imagePreview != null ? DecorationImage(image: FileImage(_imagePreview!), fit: BoxFit.cover) : null,
+                                ),
+                                child: _imagePreview == null ? const Icon(Icons.image, size: 70, color: Colors.white) : null,
+                              ),
+
                               Positioned(
                                 bottom: 6,
                                 right: 6,
@@ -203,15 +161,30 @@ class _PerfilViewState extends State<PerfilView> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: OnBoardingFormField(tec: tecNombreUsuario, label: 'Nombre de usuario', isPassword: false, mensajeError: "Introduzca su nombre de usuario"),
+                          child: OnBoardingFormField(
+                            tec: tecNombre,
+                            label: "Nombre de la actividad",
+                            isPassword: false,
+                            mensajeError: "Introduzca el nombre de la actividad",
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: OnBoardingFormField(tec: tecNombre, label: 'Nombre', isPassword: false, mensajeError: "Introduzca su nombre real",),
+                          child: OnBoardingFormField(
+                            tec: tecDescripcion,
+                            label: "Descripción",
+                            isPassword: false,
+                            mensajeError: "Introduzca la descipción de la actividad",
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: OnBoardingFormField(tec: tecApellidos, label: 'Apellidos', isPassword: false, mensajeError: "Introduzca sus apellidos"),
+                          child: OnBoardingFormField(
+                            tec: tecPrecio,
+                            label: "Precio",
+                            isPassword: false,
+                            mensajeError: "Introduzca el precio (número) de la actividad",
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -220,7 +193,7 @@ class _PerfilViewState extends State<PerfilView> {
                             child: InputDecorator(
                               decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
-                                labelText: 'Fecha de nacimiento',
+                                labelText: 'Fecha',
                                 icon: Icon(Icons.calendar_today_rounded),
                               ),
                               child: Row(
@@ -236,12 +209,26 @@ class _PerfilViewState extends State<PerfilView> {
                             ),
                           ),
                         ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            _ubicacionSeleccionada = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SeleccionarUbicacionView(),
+                              ),
+                            );
+                          },
+                          child: const Text('Seleccionar Ubicación en el Mapa'),
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 20),
-                              child: RoundedGreenButton(function: _guardarPerfil, text: 'Guardar Cambios',),
+                              child: RoundedGreenButton(
+                                function: _guardarActividad,
+                                text: 'Guardar Actividad',
+                              ),
                             ),
                           ],
                         ),
@@ -250,7 +237,8 @@ class _PerfilViewState extends State<PerfilView> {
                   ),
                 ),
               ),
-            ]),
+            ],
+          ),
         ),
       ),
     );
@@ -270,52 +258,79 @@ class _PerfilViewState extends State<PerfilView> {
     }
   }
 
-  Future<void> _guardarPerfil() async {
+  Future<void> _guardarActividad() async {
     if (_formKey.currentState!.validate()) {
-      String nombreUsuario = tecNombreUsuario.text.trim();
       String nombre = tecNombre.text.trim();
-      String apellidos = tecApellidos.text.trim();
-      if (nombreUsuario.isNotEmpty &&
-          nombre.isNotEmpty &&
-          apellidos.isNotEmpty) {
-        print('Nombre de usuario: $nombreUsuario');
-        print('Fecha de nacimiento: $_fechaSeleccionada');
-        usuarioActual.updateDisplayName(nombreUsuario);
+      String descripcion = tecDescripcion.text.trim();
+      String precioText = tecPrecio.text.trim();
 
-        if (_imagePreview != null) {
-          subeFotoPerfil();
+      if (nombre.isNotEmpty && descripcion.isNotEmpty &&
+          precioText.isNotEmpty) {
+        if (double.tryParse(precioText) == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('El precio debe ser un número válido'),
+            ),
+          );
+          return;
         }
 
-        FProfile perfil = FProfile(
-          nombre: nombre,
-          apellidos: apellidos,
-          fechaNacimiento: _fechaSeleccionada,
-          geoloc: const GeoPoint(0, 0),
-        );
+        double precio = double.parse(precioText);
 
-        await fbAdmin.actualizarPerfilUsuario(perfil);
-        await DataHolder().getProfile();
+        String rutaNube = "Actividades/${fbAdmin.auth.currentUser
+            ?.uid}/${DateTime
+            .now()
+            .millisecondsSinceEpoch}/image.jpg";
+        String rutaDescarga = "";
+        if (_imagePreview != null) {
+          //rutaDescarga = "";
+          //await fbAdmin.uploadImageToStorage(rutaNube, _imagePreview!);
+        }
 
+        FActividad fActividad;
+        String idActividad = DataHolder().selectedActivity?.id ?? "";
+
+        final ubicacionSeleccionada = _ubicacionSeleccionada;
+        if (ubicacionSeleccionada != null) {
+          double latitud = ubicacionSeleccionada.latitude;
+          double longitud = ubicacionSeleccionada.longitude;
+
+          fActividad = FActividad(
+            id: idActividad,
+            nombre: nombre,
+            descripcion: descripcion,
+            precio: precio,
+            fecha: _fechaSeleccionada,
+            imagenUrl: rutaDescarga,
+            geoloc: GeoPoint(latitud, longitud),
+          );
+        } else {
+          fActividad = FActividad(
+            id: idActividad,
+            nombre: nombre,
+            descripcion: descripcion,
+            precio: precio,
+            fecha: _fechaSeleccionada,
+            imagenUrl: rutaDescarga,
+          );
+        }
+
+        await fbAdmin.actualizarActividad(fActividad);
+        _actividadEditada = true;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Perfil guardado exitosamente"),
+            content: Text('Actividad Editada exitosamente'),
           ),
         );
-        Navigator.of(context).popAndPushNamed("/home_view");
+        Navigator.of(context).pop(_actividadEditada);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Por favor, rellenetodos los campos"),
+            content: Text('Por favor, rellena todos los campos'),
           ),
         );
       }
     }
-  }
-
-  Future<void> subeFotoPerfil() async {
-    String rutaNube = "ProfilePictures/${usuarioActual.uid}/profilePicture.jpg";
-    String rutaDescarga = await fbAdmin.uploadImageToStorage(rutaNube, _imagePreview!);
-    usuarioActual.updatePhotoURL(rutaDescarga);
   }
 
   void onPressedCamera() async {
@@ -327,8 +342,6 @@ class _PerfilViewState extends State<PerfilView> {
       });
     }
   }
-
-
 
   void onPressedGallery() async {
     XFile? image = await _picker.pickImage(source: ImageSource.gallery);

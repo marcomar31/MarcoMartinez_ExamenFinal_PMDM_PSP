@@ -33,6 +33,7 @@ class DataHolder {
 
   void saveSelectedActivityInCache() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('factivity_id', selectedActivity!.id);
     prefs.setString('factivity_nombre', selectedActivity!.nombre);
     prefs.setString('factivity_descripcion', selectedActivity!.descripcion);
     prefs.setString('factivity_imagen', selectedActivity!.imagenUrl);
@@ -45,6 +46,9 @@ class DataHolder {
 
     await Future.delayed(const Duration(seconds: 5));
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? fActivityId = prefs.getString('factivity_id');
+    fActivityId ??= "";
 
     String? fActivityNombre = prefs.getString('factivity_nombre');
     fActivityNombre ??= "";
@@ -62,6 +66,7 @@ class DataHolder {
     fActivityPrecio ?? 0;
 
     selectedActivity = FActividad(
+        id: fActivityId,
         nombre: fActivityNombre,
         descripcion: fActivityDescripcion,
         fecha: DateTime.parse(fActivityFecha),

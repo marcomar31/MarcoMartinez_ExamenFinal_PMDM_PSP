@@ -9,14 +9,14 @@ class OnBoardingFormField extends StatelessWidget {
   final String? mensajeError;
 
   const OnBoardingFormField({
-    Key? key,
+    super.key,
     required this.tec,
     required this.label,
     required this.isPassword,
     this.icon,
     this.iconColor,
     this.mensajeError
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -7,7 +7,7 @@ import 'package:marcomartinez_examenfinal/FirestoreObjects/FProfile.dart';
 import 'package:marcomartinez_examenfinal/Singleton/FirebaseAdmin.dart';
 
 class MapaView extends StatefulWidget {
-  const MapaView({Key? key}) : super(key: key);
+  const MapaView({super.key});
 
   @override
   State<MapaView> createState() => MapaViewState();
@@ -20,7 +20,7 @@ class MapaViewState extends State<MapaView> {
   Set<Marker> marcadores = {};
   late CameraPosition _kUser;
   MapType _tipoMapa = MapType.normal;
-  final Map<String, FProfile> tablaPerfiles = Map();
+  final Map<String, FProfile> tablaPerfiles = {};
 
   @override
   void initState() {
@@ -66,7 +66,7 @@ class MapaViewState extends State<MapaView> {
     actividadesRef.snapshots().listen((QuerySnapshot<FActividad> snapshot) async {
       List<Marker> nuevosMarcadores = [];
       for (var doc in snapshot.docs) {
-        FActividad actividad = await doc.data();
+        FActividad actividad = doc.data();
         if (actividad.geoloc != null) {
           Marker marker = Marker(
             markerId: MarkerId(doc.id),

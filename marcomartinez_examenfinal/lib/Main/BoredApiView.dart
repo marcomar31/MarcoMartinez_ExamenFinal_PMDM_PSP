@@ -5,6 +5,8 @@ import '../CustomizedObjects/BigCard.dart';
 import '../CustomizedObjects/Drawers.dart';
 
 class BoredApiView extends StatefulWidget {
+  const BoredApiView({super.key});
+
   @override
   State<StatefulWidget> createState() => _BoredApiViewState();
 }
@@ -44,7 +46,7 @@ class _BoredApiViewState extends State<BoredApiView> {
       appBar: appBar,
       backgroundColor: const Color.fromRGBO(10, 35, 65, 1.0),
       body: Center(child: body),
-      drawer: MainDrawer(),
+      drawer: const MainDrawer(),
       bottomNavigationBar: BottomAppBar(
         color: const Color.fromRGBO(2, 25, 52, 1.0),
         child: Row(

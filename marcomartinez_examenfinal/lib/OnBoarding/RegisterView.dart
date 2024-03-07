@@ -6,7 +6,7 @@ import '../CustomizedObjects/Buttons.dart';
 import '../Singleton/PlatformAdmin.dart';
 
 class RegisterView extends StatefulWidget {
-  RegisterView({super.key});
+  const RegisterView({super.key});
 
   @override
   _RegisterViewState createState() => _RegisterViewState();

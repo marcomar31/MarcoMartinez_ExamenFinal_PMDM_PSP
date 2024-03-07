@@ -13,7 +13,7 @@ import '../Singleton/PlatformAdmin.dart';
 import 'SeleccionarUbicacionView.dart';
 
 class CreaActividadView extends StatefulWidget {
-  const CreaActividadView({Key? key}) : super(key: key);
+  const CreaActividadView({super.key});
 
   @override
   _CreaActividadViewState createState() => _CreaActividadViewState();
@@ -30,7 +30,7 @@ class _CreaActividadViewState extends State<CreaActividadView> {
   DateTime _fechaSeleccionada = DateTime.now();
   final ImagePicker _picker = ImagePicker();
   File? _imagePreview;
-  LatLng? _ubicacionSeleccionada = null;
+  LatLng? _ubicacionSeleccionada;
 
   @override
   void initState() {
@@ -202,7 +202,7 @@ class _CreaActividadViewState extends State<CreaActividadView> {
                               _ubicacionSeleccionada = await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => SeleccionarUbicacionView(),
+                                builder: (context) => const SeleccionarUbicacionView(),
                               ),
                             );
                           },
@@ -276,13 +276,15 @@ class _CreaActividadViewState extends State<CreaActividadView> {
         }
 
         FActividad fActividad;
+        String idActividad = "${fbAdmin.auth.currentUser?.uid}_${DateTime.now().millisecondsSinceEpoch.toString()}";
 
-        final _ubicacionSeleccionada = this._ubicacionSeleccionada;
-        if (_ubicacionSeleccionada != null) {
-          double latitud = _ubicacionSeleccionada.latitude;
-          double longitud = _ubicacionSeleccionada.longitude;
+        final ubicacionSeleccionada = _ubicacionSeleccionada;
+        if (ubicacionSeleccionada != null) {
+          double latitud = ubicacionSeleccionada.latitude;
+          double longitud = ubicacionSeleccionada.longitude;
 
           fActividad = FActividad(
+            id: idActividad,
             nombre: nombre,
             descripcion: descripcion,
             precio: precio,
@@ -292,6 +294,7 @@ class _CreaActividadViewState extends State<CreaActividadView> {
           );
         } else {
           fActividad = FActividad(
+            id: idActividad,
             nombre: nombre,
             descripcion: descripcion,
             precio: precio,
@@ -300,7 +303,7 @@ class _CreaActividadViewState extends State<CreaActividadView> {
           );
         }
 
-        await fbAdmin.subirActividad(fActividad);
+        await fbAdmin.subirActividadCustomId(fActividad);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Actividad creada exitosamente'),

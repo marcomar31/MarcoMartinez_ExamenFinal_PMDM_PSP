@@ -5,6 +5,8 @@ import 'package:marcomartinez_examenfinal/OnBoarding/RegisterView.dart';
 import '../CustomizedObjects/Buttons.dart';
 
 class OnBoarding extends StatefulWidget {
+  const OnBoarding({super.key});
+
   @override
   State<StatefulWidget> createState() => _OnBoardingState();
 }
@@ -44,10 +46,10 @@ class _OnBoardingState extends State<OnBoarding> {
 
     switch (selectedIndex) {
       case 0:
-        page = LoginView();
+        page = const LoginView();
         break;
       case 1:
-        page = RegisterView();
+        page = const RegisterView();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');

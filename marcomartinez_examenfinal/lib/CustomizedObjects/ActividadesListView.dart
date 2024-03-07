@@ -10,13 +10,13 @@ class ActividadesListView extends StatelessWidget {
   final Function(int indice)? onPressed;
 
   const ActividadesListView({
-    Key? key,
+    super.key,
     required this.sText,
     required this.dFontSize,
     this.imageUrl,
     required this.iPosicion,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class ActividadesListView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(right: 15.0),
                 child: PlatformAdmin.isWebPlatform()
-                ? SizedBox(
+                ? const SizedBox(
                     width: 50,
                     height: 50,
                     // child: createImageCodecFromUrl(),

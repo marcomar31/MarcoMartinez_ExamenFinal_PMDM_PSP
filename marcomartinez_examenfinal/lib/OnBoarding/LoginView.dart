@@ -8,7 +8,7 @@ import '../CustomizedObjects/Buttons.dart';
 import '../Singleton/PlatformAdmin.dart';
 
 class LoginView extends StatefulWidget {
-  const LoginView({Key? key}) : super(key: key);
+  const LoginView({super.key});
 
   @override
   _LoginViewState createState() => _LoginViewState();
@@ -61,7 +61,7 @@ class _LoginViewState extends State<LoginView> {
                       isPassword: false,
                       icon: Icons.email_rounded,
                       iconColor: const Color.fromRGBO(115, 208, 156, 1.0),
-                      mensajeError: "Por favor, ingresa su email",
+                      mensajeError: "Por favor, ingrese su email",
                     ),
                   ),
                   Padding(

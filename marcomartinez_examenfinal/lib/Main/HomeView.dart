@@ -93,7 +93,7 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
         ),
-      drawer: MainDrawer(),
+      drawer: const MainDrawer(),
       appBar: appBar,
       backgroundColor: const Color.fromRGBO(10, 35, 65, 1.0),
       bottomNavigationBar: BottomNavigationBar(

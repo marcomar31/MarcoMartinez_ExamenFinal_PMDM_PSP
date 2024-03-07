@@ -6,6 +6,8 @@ import '../Singleton/FirebaseAdmin.dart';
 import '../Singleton/PlatformAdmin.dart';
 
 class MainDrawer extends StatefulWidget {
+  const MainDrawer({super.key});
+
   @override
   State<StatefulWidget> createState() => _MainDrawerState();
 }
