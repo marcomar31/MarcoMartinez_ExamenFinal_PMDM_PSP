@@ -13,7 +13,7 @@ class BoredApiView extends StatefulWidget {
 
 class _BoredApiViewState extends State<BoredApiView> {
   HttpAdmin httpAdmin = HttpAdmin();
-  String idea = "Pulsa el botón";
+  String idea = "Pulsa el botón de la parte inferior de la pantalla";
 
   @override
   Widget build(BuildContext context) {

@@ -69,32 +69,23 @@ class _PerfilViewState extends State<PerfilView> {
   Widget build(BuildContext context) {
     double screenWidth = PlatformAdmin.getScreenWidth(context);
 
-    if (imgUrl.isNotEmpty) {
-      if (_imagePreview == null) {
-        circleAvatar = CircleAvatar(
-          radius: 70,
-          backgroundColor: Colors.grey,
-          backgroundImage: NetworkImage(imgUrl),
-        );
-      } else {
-        circleAvatar = CircleAvatar(
-          radius: 70,
-          backgroundColor: Colors.grey,
-          backgroundImage: FileImage(_imagePreview!),
-        );
-      }
-    } else {
-      circleAvatar = const CircleAvatar(
-        radius: 70,
-        backgroundColor: Colors.grey,
-        backgroundImage: null,
-        child: Icon(
-          Icons.person_rounded,
-          size: 70,
-          color: Colors.white,
-        )
-      );
-    }
+    circleAvatar = CircleAvatar(
+      radius: 70,
+      backgroundColor: Colors.grey,
+      backgroundImage: (imgUrl.isNotEmpty && _imagePreview == null)
+          ? NetworkImage(imgUrl) as ImageProvider<Object>
+          : _imagePreview != null
+          ? FileImage(_imagePreview!)
+          : null,
+      child: imgUrl.isEmpty && _imagePreview == null
+          ? const Icon(
+        Icons.person_rounded,
+        size: 70,
+        color: Colors.white,
+      )
+          : null,
+    );
+
 
     return Scaffold(
       backgroundColor: const Color.fromRGBO(10, 35, 65, 1.0),
@@ -313,8 +304,13 @@ class _PerfilViewState extends State<PerfilView> {
   }
 
   Future<void> subeFotoPerfil() async {
-    String rutaNube = "ProfilePictures/${usuarioActual.uid}/profilePicture.jpg";
-    String rutaDescarga = await fbAdmin.uploadImageToStorage(rutaNube, _imagePreview!);
+    String rutaNubeNueva = "ProfilePictures/${usuarioActual.uid}/profilePicture.jpg";
+    String rutaDescarga = "";
+    if (usuarioActual.photoURL == null)  {
+      rutaDescarga = await fbAdmin.uploadImageToStorage(rutaNubeNueva, _imagePreview!);
+    } else {
+      rutaDescarga = await fbAdmin.updateImageStorage(usuarioActual.photoURL!, rutaNubeNueva, _imagePreview!);
+    }
     usuarioActual.updatePhotoURL(rutaDescarga);
   }
 

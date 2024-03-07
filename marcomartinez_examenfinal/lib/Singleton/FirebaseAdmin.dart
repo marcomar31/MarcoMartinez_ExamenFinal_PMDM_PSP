@@ -177,6 +177,24 @@ class FirebaseAdmin {
       return "";
     }
   }
+  Future<String> updateImageStorage(String rutaNubeAnterior, String rutaNubeNueva, File rutaLocal) async {
+    final storageRef = fbStorage.ref();
+    final rutaAFicheroEnNubeAnterior = storageRef.child(rutaNubeAnterior);
+    final rutaAFicheroEnNubeNueva = storageRef.child(rutaNubeNueva);
+
+    rutaAFicheroEnNubeAnterior.delete();
+
+    try {
+      UploadTask uploadTask = rutaAFicheroEnNubeNueva.putFile(rutaLocal);
+
+      TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+      String imageUrl = await taskSnapshot.ref.getDownloadURL();
+      return imageUrl;
+    } catch (e) {
+      print("ERROR AL ACTUALIZAR IMAGEN: $e");
+      return "";
+    }
+  }
 
   Future<String> downloadUserProfileImage() async {
     if (auth.currentUser?.photoURL != null) {
