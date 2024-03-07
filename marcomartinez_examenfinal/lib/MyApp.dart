@@ -8,6 +8,7 @@ import 'package:marcomartinez_examenfinal/OnBoarding/OnBoarding.dart';
 
 import 'Main/ConfiguracionView.dart';
 import 'Main/EditaActividadView.dart';
+import 'Main/EditaPerfilView.dart';
 import 'Main/HomeView.dart';
 import 'Main/PerfilView.dart';
 import 'OnBoarding/LoginView.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
           '/creaactividad_view': (context) => const CreaActividadView(),
           '/editaactividad_view': (context) => const EditaActividadView(),
           '/perfil_view': (context) => const PerfilView(),
+          '/editaperfil_view': (context) => const EditaPerfilView(),
           '/actividad_view': (context) => const ActividadView(),
           '/mapa_view': (context) => const MapaView(),
         },
@@ -51,6 +53,7 @@ class MyApp extends StatelessWidget {
           '/configuracion_view': (context) => const ConfiguracionView(),
           '/creaactividad_view': (context) => const CreaActividadView(),
           '/perfil_view': (context) => const PerfilView(),
+          '/editaperfil_view': (context) => const EditaPerfilView(),
           '/actividad_view': (context) => const ActividadView(),
         },
         initialRoute: '/onboarding_view',
