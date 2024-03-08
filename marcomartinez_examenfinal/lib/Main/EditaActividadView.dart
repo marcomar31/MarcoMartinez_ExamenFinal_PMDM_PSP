@@ -33,6 +33,8 @@ class _EditaActividadViewState extends State<EditaActividadView> {
   final ImagePicker _picker = ImagePicker();
   File? _imagePreview;
   LatLng? _ubicacionSeleccionada;
+  bool _imagenCambiada = false;
+  late Container containerImage;
 
   @override
   void initState() {
@@ -48,6 +50,7 @@ class _EditaActividadViewState extends State<EditaActividadView> {
       double? longitud = geoloc.longitude;
       _ubicacionSeleccionada = LatLng(latitud, longitud);
     }
+    _iniciarContenedorImagen();
   }
 
   @override
@@ -92,7 +95,7 @@ class _EditaActividadViewState extends State<EditaActividadView> {
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: const Text('AVATAR DE USUARIO'),
+                                title: const Text('IMAGEN DE ACTIVIDAD'),
                                 content: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -119,6 +122,19 @@ class _EditaActividadViewState extends State<EditaActividadView> {
                                     onPressed: () {
                                       setState(() {
                                         _imagePreview = null;
+                                        containerImage = Container(
+                                          width: 140,
+                                          height: 140,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey,
+                                            borderRadius: BorderRadius.circular(20),
+                                            image: _imagePreview != null
+                                                ? DecorationImage(image: FileImage(_imagePreview!), fit: BoxFit.cover)
+                                                : null,
+                                          ),
+                                          child: _imagePreview == null ? const Icon(Icons.image, size: 70, color: Colors.white) : null,
+                                        );
+                                        _imagenCambiada = true;
                                       });
                                       Navigator.pop(context);
                                     },
@@ -130,17 +146,7 @@ class _EditaActividadViewState extends State<EditaActividadView> {
                           },
                           child: Stack(
                             children: [
-                              Container(
-                                width: 140,
-                                height: 140,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey,
-                                  borderRadius: BorderRadius.circular(20),
-                                  image: _imagePreview != null ? DecorationImage(image: FileImage(_imagePreview!), fit: BoxFit.cover) : null,
-                                ),
-                                child: _imagePreview == null ? const Icon(Icons.image, size: 70, color: Colors.white) : null,
-                              ),
-
+                              containerImage,
                               Positioned(
                                 bottom: 6,
                                 right: 6,
@@ -278,14 +284,18 @@ class _EditaActividadViewState extends State<EditaActividadView> {
 
         double precio = double.parse(precioText);
 
-        String rutaNube = "Actividades/${fbAdmin.auth.currentUser
-            ?.uid}/${DateTime
-            .now()
-            .millisecondsSinceEpoch}/image.jpg";
-        String rutaDescarga = "";
-        if (_imagePreview != null) {
-          //rutaDescarga = "";
-          //await fbAdmin.uploadImageToStorage(rutaNube, _imagePreview!);
+        String? rutaDescarga = DataHolder().selectedActivity?.imagenUrl;
+
+        if (_imagenCambiada){
+          String rutaNube = "Actividades/${fbAdmin.auth.currentUser
+              ?.uid}/${DateTime
+              .now()
+              .millisecondsSinceEpoch}/image.jpg";
+          if (_imagePreview != null) {
+            rutaDescarga = await fbAdmin.uploadImageToStorage(rutaNube, _imagePreview!);
+          } else {
+            rutaDescarga = "";
+          }
         }
 
         FActividad fActividad;
@@ -302,7 +312,7 @@ class _EditaActividadViewState extends State<EditaActividadView> {
             descripcion: descripcion,
             precio: precio,
             fecha: _fechaSeleccionada,
-            imagenUrl: rutaDescarga,
+            imagenUrl: rutaDescarga!,
             geoloc: GeoPoint(latitud, longitud),
           );
         } else {
@@ -312,7 +322,7 @@ class _EditaActividadViewState extends State<EditaActividadView> {
             descripcion: descripcion,
             precio: precio,
             fecha: _fechaSeleccionada,
-            imagenUrl: rutaDescarga,
+            imagenUrl: rutaDescarga!,
           );
         }
 
@@ -340,6 +350,19 @@ class _EditaActividadViewState extends State<EditaActividadView> {
     if (image != null) {
       setState(() {
         _imagePreview = File(image.path);
+        containerImage = Container(
+          width: 140,
+          height: 140,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            borderRadius: BorderRadius.circular(20),
+            image: _imagePreview != null
+                ? DecorationImage(image: FileImage(_imagePreview!), fit: BoxFit.cover)
+                : null,
+          ),
+          child: _imagePreview == null ? const Icon(Icons.image, size: 70, color: Colors.white) : null,
+        );
+        _imagenCambiada = true;
       });
     }
   }
@@ -350,7 +373,37 @@ class _EditaActividadViewState extends State<EditaActividadView> {
     if (image != null) {
       setState(() {
         _imagePreview = File(image.path);
+        containerImage = Container(
+          width: 140,
+          height: 140,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            borderRadius: BorderRadius.circular(20),
+            image: _imagePreview != null
+                ? DecorationImage(image: FileImage(_imagePreview!), fit: BoxFit.cover)
+                : null,
+          ),
+          child: _imagePreview == null ? const Icon(Icons.image, size: 70, color: Colors.white) : null,
+        );
+        _imagenCambiada = true;
       });
     }
+  }
+
+  void _iniciarContenedorImagen() {
+    containerImage = Container(
+      width: 140,
+      height: 140,
+      decoration: BoxDecoration(
+        color: Colors.grey,
+        borderRadius: BorderRadius.circular(20),
+        image: DataHolder().selectedActivity!.imagenUrl.isNotEmpty
+            ? DecorationImage(image: NetworkImage(DataHolder().selectedActivity!.imagenUrl), fit: BoxFit.cover)
+            : _imagePreview != null
+            ? DecorationImage(image: FileImage(_imagePreview!), fit: BoxFit.cover)
+            : null,
+      ),
+      child: (_imagePreview == null && DataHolder().selectedActivity!.imagenUrl.isEmpty) ? const Icon(Icons.image, size: 70, color: Colors.white) : null,
+    );
   }
 }

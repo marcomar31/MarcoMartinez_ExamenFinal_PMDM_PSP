@@ -198,7 +198,22 @@ class FirebaseAdmin {
 
   Future<String> downloadUserProfileImage() async {
     if (auth.currentUser?.photoURL != null) {
-      Reference ref = FirebaseStorage.instance.refFromURL(auth.currentUser!.photoURL ?? "");
+      Reference ref = fbStorage.refFromURL(auth.currentUser!.photoURL ?? "");
+      try {
+        return await ref.getDownloadURL();
+      } catch (e) {
+        print("Error al descargar la imagen de perfil: $e");
+        return "";
+      }
+    }
+    else {
+      return "";
+    }
+  }
+
+  Future<String> downloadActivityImage() async {
+    if (DataHolder().selectedActivity!.imagenUrl.isNotEmpty) {
+      Reference ref = fbStorage.refFromURL(DataHolder().selectedActivity!.imagenUrl);
       try {
         return await ref.getDownloadURL();
       } catch (e) {

@@ -80,7 +80,7 @@ class _CreaActividadViewState extends State<CreaActividadView> {
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: const Text('AVATAR DE USUARIO'),
+                                title: const Text('IMAGEN DE ACTIVIDAD'),
                                 content: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
