@@ -245,15 +245,16 @@ class _EditaActividadViewState extends State<EditaActividadView> {
   }
 
   Future<void> _seleccionarFecha() async {
-    final DateTime? fechaSeleccionada = await showDatePicker(
+    final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: _fechaSeleccionada,
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
     );
-    if (fechaSeleccionada != null) {
+
+    if (pickedDate != null && pickedDate != _fechaSeleccionada) {
       setState(() {
-        _fechaSeleccionada = fechaSeleccionada;
+        _fechaSeleccionada = pickedDate;
       });
     }
   }

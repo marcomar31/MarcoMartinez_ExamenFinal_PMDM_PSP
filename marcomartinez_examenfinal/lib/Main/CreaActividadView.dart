@@ -236,8 +236,8 @@ class _CreaActividadViewState extends State<CreaActividadView> {
     final DateTime? fechaSeleccionada = await showDatePicker(
       context: context,
       initialDate: _fechaSeleccionada,
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
     );
     if (fechaSeleccionada != null) {
       setState(() {
