@@ -6,6 +6,7 @@ import 'package:marcomartinez_examenfinal/CustomizedObjects/ActividadesListView.
 import 'package:marcomartinez_examenfinal/CustomizedObjects/Drawers.dart';
 import 'package:marcomartinez_examenfinal/FirestoreObjects/FActividad.dart';
 import 'package:marcomartinez_examenfinal/Main/NotificacionesView.dart';
+import 'package:marcomartinez_examenfinal/Main/ResultadosBuscarActividad.dart';
 import 'package:marcomartinez_examenfinal/Singleton/DataHolder.dart';
 import 'package:marcomartinez_examenfinal/Singleton/GeolocAdmin.dart';
 
@@ -22,7 +23,9 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   FirebaseAdmin fbAdmin = FirebaseAdmin();
   GeolocAdmin geolocAdmin = GeolocAdmin();
+  final TextEditingController _searchController = TextEditingController();
   final List<FActividad> actividades = [];
+  List<FActividad> searchResults = [];
   bool blIsList = true;
   late Position position;
 
@@ -70,7 +73,8 @@ class _HomeViewState extends State<HomeView> {
         IconButton(
           icon: const Icon(Icons.search_rounded),
           onPressed: () {
-
+            //Navigator.of(context).pushNamed("/resultadosbuscaractividad_view");
+            buscarActividadesByTitulo();
           },
         ),
         IconButton(
@@ -213,4 +217,72 @@ class _HomeViewState extends State<HomeView> {
     descargarActividades();
   }
 
+  void buscarActividadesByTitulo() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Buscar Actividades"),
+          content: TextField(
+            controller: _searchController,
+            decoration: const InputDecoration(hintText: "Ingrese el texto de búsqueda"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Cancelar"),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (await buscarActividades()) {
+                  Navigator.of(context).pop();
+                  bool resultado = await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ResultadosBuscarActividadView(matches: searchResults),
+                    ),
+                  ) as bool? ?? false;
+                  if (resultado) {
+                    actualizarActividades();
+                  }
+                }
+              },
+              child: const Text("Buscar"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<bool> buscarActividades() async {
+    String searchText = _searchController.text;
+    List<FActividad> results = await fbAdmin.buscarActividadesPorTitulo(searchText, actividades);
+      if (results.isNotEmpty) {
+        setState(() {
+          searchResults = results;
+        });
+    return true;
+      } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Resultados de la Búsqueda'),
+            content: Text('No se encontraron actividades: $searchText'),
+            actions: [
+              TextButton(
+                child: const Text('Aceptar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      return false;
+    }
+  }
 }

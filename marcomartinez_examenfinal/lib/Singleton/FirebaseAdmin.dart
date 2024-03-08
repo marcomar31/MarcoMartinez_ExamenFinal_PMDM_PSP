@@ -249,4 +249,16 @@ class FirebaseAdmin {
     String? selectedActivity = DataHolder().selectedActivity?.id ?? "";
     await db.collection("Actividades").doc(selectedActivity).update(actividad.toFirestore());
   }
+
+  Future<List<FActividad>> buscarActividadesPorTitulo(String searchValue, List<FActividad> coleccionActividades) async {
+    List<FActividad> matches = [];
+    for (var actividad in coleccionActividades) {
+      if (actividad.nombre.toLowerCase().contains(
+          searchValue.toLowerCase())) {
+        matches.add(actividad);
+      }
+    }
+
+    return matches;
+  }
 }
